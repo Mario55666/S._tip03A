@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ══ PWA ══════════════════════════════════════════════════ -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#c9184a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cons. Tipográfica">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- ════════════════════════════════════════════════════════════ -->
+<title>Constelación Tipográfica · Atributos de Moles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070f;--surf:#0e0e1a;--surf2:#141426;--border:rgba(255,255,255,.07);
+  --red:#c9184a;--gold:#e9c46a;--cyan:#4cc9f0;--green:#6bcb77;
+  --purple:#b185ff;--orange:#f4a261;--pink:#ff6b9d;--yellow:#ffd166;
+  --text:#f0f0f8;--muted:#7878a0;
+  --ff-d:'Playfair Display',Georgia,serif;
+  --ff-m:'Space Mono',monospace;
+  --ff-u:'Outfit',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-u);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.65}
+
+header{
+  background:linear-gradient(155deg,#080818 0%,#110220 55%,#070710 100%);
+  border-bottom:1px solid var(--border);padding:44px 20px 30px;text-align:center;position:relative;overflow:hidden;
+}
+header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 0%,rgba(201,24,74,.13),transparent 70%);pointer-events:none}
+.hdr-label{font:700 10.5px/1 var(--ff-m);letter-spacing:.28em;text-transform:uppercase;color:var(--red);margin-bottom:13px;position:relative}
+header h1{font:900 clamp(1.8rem,4.5vw,3rem)/1.08 var(--ff-d);letter-spacing:-.02em;position:relative}
+header h1 em{color:var(--gold);font-style:italic}
+header p{font:400 12px/1 var(--ff-m);letter-spacing:.08em;color:var(--muted);margin-top:10px;position:relative}
+
+.container{max-width:1060px;margin:0 auto;padding:0 20px 80px}
+
+/* TYPEFACE TABS */
+.type-selector{display:grid;grid-template-columns:repeat(4,1fr);margin:32px 0 0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surf)}
+.type-btn{padding:15px 8px;background:transparent;color:var(--muted);border:none;border-right:1px solid var(--border);cursor:pointer;font:700 clamp(.9rem,2.2vw,1.45rem)/1 var(--ff-d);transition:background .2s,color .2s}
+.type-btn:last-child{border-right:none}
+.type-btn:hover{background:var(--surf2);color:var(--text)}
+.type-btn.active{background:var(--red);color:#fff}
+
+.type-panel{display:none;padding-top:22px}
+.type-panel.active{display:block}
+
+/* LAYER CONTROLS */
+.layer-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.lc-label{font:700 10px/1 var(--ff-m);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.lc-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px 7px 10px;border:1px solid var(--border);border-radius:5px;
+  background:var(--surf);color:var(--text);cursor:pointer;
+  font:400 11.5px/1 var(--ff-m);letter-spacing:.05em;transition:all .2s;user-select:none;
+}
+.lc-btn .eye{font-size:15px;line-height:1}
+.lc-btn.off{opacity:.42}
+.lc-btn[data-layer="1"].on{border-color:var(--gold);color:var(--gold)}
+.lc-btn[data-layer="2"].on{border-color:var(--cyan);color:var(--cyan)}
+.lc-btn[data-layer="3"].on{border-color:var(--purple);color:var(--purple)}
+
+/* STAGE */
+.stage{position:relative;border-radius:10px;overflow:visible;background:#000;box-shadow:0 0 0 1px var(--border),0 20px 56px rgba(0,0,0,.75)}
+.stage-inner{position:relative;overflow:hidden;border-radius:10px}
+.stage-inner img.slayer{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:opacity .3s}
+.stage-inner img.slayer.l1{position:relative;display:block;width:100%;height:auto;z-index:1}
+.stage-inner img.slayer.l2{z-index:2}
+.stage-inner img.slayer.l3{z-index:3}
+.stage-inner img.slayer.hidden{opacity:0;pointer-events:none}
+
+/* HOTSPOTS */
+.hs{
+  position:absolute;width:28px;height:28px;border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.9);background:rgba(0,0,0,.6);
+  cursor:pointer;z-index:400;transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;
+  transition:transform .2s,box-shadow .2s;
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+}
+.hs::after{content:'+'}
+.hs[data-zone="pro"]{border-color:#b185ff;background:rgba(177,133,255,.22)}
+.hs[data-zone="pro"]::after{content:'◉';font-size:12px}
+.hs[data-zone="pub"]{border-color:#4cc9f0;background:rgba(76,201,240,.18)}
+.hs[data-zone="pub"]::after{content:'◎';font-size:12px}
+.hs:hover,.hs.on{transform:translate(-50%,-50%) scale(1.35);box-shadow:0 0 0 7px rgba(255,255,255,.1)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.4)}70%{box-shadow:0 0 0 8px rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+.hs{animation:pulse 2.8s ease-out infinite}
+.hs:hover,.hs.on{animation:none}
+
+/* TOOLTIP */
+#g-tip{
+  position:fixed;max-width:305px;min-width:220px;
+  background:rgba(6,6,18,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.08);border-left:4px solid var(--red);border-radius:9px;
+  padding:13px 16px 15px;z-index:9999;pointer-events:none;
+  opacity:0;transition:opacity .18s;box-shadow:0 16px 44px rgba(0,0,0,.8);
+}
+#g-tip .tp-zone{font:700 9.5px/1 var(--ff-m);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+#g-tip .tp-title{font:700 15px/1.25 var(--ff-d);margin-bottom:6px}
+#g-tip .tp-desc{font:400 12px/1.6 var(--ff-u);color:var(--muted)}
+
+/* INFO PANEL */
+.hs-info{margin:12px 0 0;padding:15px 20px;background:var(--surf);border-radius:8px;border-left:4px solid var(--border);min-height:56px;transition:border-color .3s}
+.hs-info.lit{border-left-color:var(--gold)}
+.hs-info .hi-zone{font:700 9.5px/1 var(--ff-m);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.hs-info .hi-title{font:700 17px/1.25 var(--ff-d);margin-bottom:5px}
+.hs-info .hi-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.hs-info .hi-hint{font:400 11.5px/1 var(--ff-m);color:var(--muted);opacity:.55;text-align:center;padding-top:4px}
+
+/* CONSTELLATION PANEL */
+.const-panel{display:none;margin-top:14px;background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.const-panel.show{display:block}
+.const-panel-head{padding:15px 22px 12px;background:linear-gradient(90deg,rgba(177,133,255,.08),transparent);border-bottom:1px solid var(--border)}
+.const-panel-head h4{font:700 12.5px/1 var(--ff-m);letter-spacing:.08em;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
+.const-panel-head p{font-size:12.5px;color:var(--muted);line-height:1.5}
+.const-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:640px){.const-body{grid-template-columns:1fr}}
+.const-col{padding:18px 22px}
+.const-col:first-child{border-right:1px solid var(--border)}
+.const-col-title{display:flex;align-items:center;gap:8px;font:700 10px/1 var(--ff-m);letter-spacing:.18em;text-transform:uppercase;margin-bottom:14px;flex-wrap:wrap}
+.zone-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.const-item{display:flex;gap:10px;margin-bottom:12px}
+.ci-bullet{width:4px;flex-shrink:0;border-radius:2px;background:var(--border);margin-top:3px}
+.ci-name{font:700 13px/1.2 var(--ff-d);margin-bottom:3px}
+.ci-def{font:400 11.5px/1.55 var(--ff-u);color:var(--muted)}
+.const-formula{padding:14px 22px;background:rgba(255,255,255,.025);border-top:1px solid var(--border);font:400 12px/1.65 var(--ff-u);color:var(--muted)}
+.const-formula strong{color:var(--text)}
+
+/* ATTRIBUTE TABLE */
+.attr-table-wrap{display:none;margin-top:14px;background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.attr-table-wrap.show{display:block}
+.attr-table{width:100%;border-collapse:collapse;font-size:13px}
+.attr-table th{background:var(--surf2);padding:10px 14px;text-align:left;font:700 10px/1 var(--ff-m);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+.attr-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55}
+.attr-table tr:last-child td{border-bottom:none}
+.attr-table td:first-child{font-weight:600;color:var(--gold);width:20%;min-width:100px}
+.attr-table td:nth-child(2){color:var(--text);width:42%}
+.attr-table td:last-child{color:var(--muted);width:38%}
+@media(max-width:560px){.attr-table-wrap{overflow-x:auto}.attr-table{min-width:480px}}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.legend-item{display:flex;align-items:center;gap:7px;font:400 11px/1 var(--ff-m);color:var(--muted);background:var(--surf);border:1px solid var(--border);padding:5px 11px;border-radius:20px}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* DIVIDER */
+.sec-div{text-align:center;padding:42px 0 26px;position:relative}
+.sec-div::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+.sec-div span{position:relative;background:var(--bg);padding:0 24px;font:italic 400 14px/1 var(--ff-d);color:var(--muted)}
+
+/* FORM */
+.form-wrap{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:clamp(22px,5vw,46px)}
+.form-wrap h2{font:900 clamp(1.5rem,3.5vw,2.1rem)/1.1 var(--ff-d);margin-bottom:5px}
+.form-wrap>.fp{font:400 12px/1 var(--ff-m);color:var(--muted);letter-spacing:.05em;margin-bottom:32px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+@media(max-width:560px){.f-row{grid-template-columns:1fr}}
+.f-group{display:flex;flex-direction:column;gap:5px;margin-bottom:18px}
+.f-group label{font:700 10.5px/1 var(--ff-m);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.f-group input,.f-group textarea{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:11px 14px;color:var(--text);font:400 14px/1.4 var(--ff-u);width:100%;transition:border-color .2s}
+.f-group input:focus,.f-group textarea:focus{outline:none;border-color:var(--gold)}
+.f-group textarea{min-height:98px;resize:vertical}
+.f-err{font:400 10.5px/1 var(--ff-m);color:var(--red);display:none}
+.f-group.bad input,.f-group.bad textarea{border-color:var(--red)}
+.f-group.bad .f-err{display:block}
+.q-block{background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:20px 22px;margin-bottom:18px}
+.q-block h3{font:700 14.5px/1.5 var(--ff-d);margin-bottom:13px}
+.q-block h3 .qn{display:block;font:700 9.5px/1 var(--ff-m);letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.radio-row,.check-row{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;font-size:13.5px;transition:background .15s;margin-bottom:3px;line-height:1.45}
+.radio-row:hover,.check-row:hover{background:var(--surf);border-color:var(--border)}
+.radio-row input,.check-row input{width:15px;height:15px;flex-shrink:0;margin-top:2px;accent-color:var(--gold);cursor:pointer}
+.q-err{font:400 10.5px/1 var(--ff-m);color:var(--red);display:none;padding:3px 12px 0}
+.q-block.bad .q-err{display:block}
+.sub-area{margin-top:34px;text-align:center}
+.btn-sub{background:var(--red);color:#fff;border:none;padding:15px 50px;border-radius:6px;font:700 17px/1 var(--ff-d);cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s}
+.btn-sub:hover{background:#e0224e;transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,24,74,.4)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.f-msg{display:none;padding:18px;border-radius:8px;margin-top:20px;text-align:center;font-size:13.5px;line-height:1.6}
+.f-msg.ok{background:rgba(107,203,119,.1);border:1px solid rgba(107,203,119,.3);color:#6bcb77}
+.f-msg.err{background:rgba(201,24,74,.1);border:1px solid rgba(201,24,74,.3);color:var(--red)}
+
+footer{background:#000;border-top:1px solid var(--border);padding:20px;text-align:center;font:400 11.5px/1 var(--ff-m);color:var(--muted);letter-spacing:.12em}
+
+@media(max-width:680px){
+  .type-selector{grid-template-columns:repeat(2,1fr)}
+  .type-btn{border-bottom:1px solid var(--border)}
+  .lc-btn{padding:6px 10px 6px 8px;font-size:10.5px}
+  .hs{width:24px;height:24px;font-size:13px}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   FAB TOOLBAR  —  Imprimir / Guardar PDF  +  Instalar PWA
+══════════════════════════════════════════════════════════════ */
+.fab-bar{
+  position:fixed;bottom:24px;right:20px;
+  display:flex;flex-direction:column;align-items:flex-end;gap:10px;
+  z-index:5000;
+}
+.fab{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 20px;border-radius:50px;
+  border:none;cursor:pointer;
+  font-family:var(--ff-u);font-size:13px;font-weight:700;letter-spacing:.03em;
+  box-shadow:0 6px 24px rgba(0,0,0,.55);
+  transition:transform .18s cubic-bezier(.16,1,.3,1),
+             box-shadow .18s cubic-bezier(.16,1,.3,1),
+             background .18s;
+  white-space:nowrap;
+}
+.fab:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.7)}
+.fab:active{transform:translateY(0);box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.fab-print{background:var(--red);color:#fff}
+.fab-install{
+  background:#1c1c2e;color:var(--gold);
+  border:1px solid rgba(233,196,106,.35);
+  display:none;
+}
+.fab-install.visible{display:flex}
+.fab svg{flex-shrink:0}
+
+/* ── PWA install toast ──────────────────────────────────────── */
+.pwa-toast{
+  position:fixed;bottom:100px;right:20px;max-width:272px;
+  background:#1c1c2e;border:1px solid rgba(233,196,106,.2);
+  border-radius:12px;padding:14px 16px;
+  font-size:12.5px;color:var(--muted);line-height:1.55;
+  box-shadow:0 8px 32px rgba(0,0,0,.65);z-index:4999;
+  opacity:0;transform:translateY(8px) scale(.97);pointer-events:none;
+  transition:opacity .28s,transform .28s;
+}
+.pwa-toast.show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+.pwa-toast strong{color:var(--gold);display:block;margin-bottom:4px;font-size:13px}
+.pwa-toast .ct{
+  float:right;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:18px;
+  margin:-4px -4px 0 8px;line-height:1;opacity:.7;
+}
+.pwa-toast .ct:hover{opacity:1}
+
+/* ══════════════════════════════════════════════════════════════
+   PRINT / PDF   —   @media print
+   • Muestra los 4 paneles completos con sus tablas
+   • Oculta controles interactivos, hotspots y formulario
+   • Mantiene fondo oscuro (print-color-adjust: exact)
+══════════════════════════════════════════════════════════════ */
+@media print{
+  @page{margin:14mm 11mm;size:A4 portrait}
+
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+
+  body{background:#07070f!important;color:#f0f0f8!important}
+
+  /* — Ocultar elementos interactivos — */
+  .type-selector,.layer-controls,.legend,
+  .fab-bar,.pwa-toast,#g-tip,.hs,.hs-info,
+  .sec-div,.form-wrap,footer,
+  button:not(.print-keep){display:none!important}
+
+  /* — Mostrar TODOS los paneles — */
+  .type-panel{display:block!important;page-break-after:always}
+  .type-panel:last-of-type{page-break-after:auto}
+
+  /* — Tablas y constelaciones siempre visibles — */
+  .attr-table-wrap,.const-panel{display:block!important}
+
+  /* — Sin cortes internos — */
+  .attr-table-wrap,.const-panel,.stage{page-break-inside:avoid}
+
+  /* — Stage: sólo capa base (l1) — */
+  .stage-inner img.slayer.l2,
+  .stage-inner img.slayer.l3{display:none!important}
+  .stage{box-shadow:none!important;max-height:260px;overflow:hidden}
+  .stage-inner img.slayer.l1{max-height:260px;width:100%;object-fit:cover}
+
+  /* — Header limpio — */
+  header{padding:18px!important}
+  header::before{display:none!important}
+
+  .container{padding-bottom:16px!important}
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-label">Semana 3 &nbsp;·&nbsp; Curso de Tipografía &nbsp;·&nbsp; UTP 2026</div>
+  <h1>Constelación de <em>Atributos de Moles</em></h1>
+  <p>Análisis tipográfico interactivo · identifica · interpreta · analiza</p>
+</header>
+
+<div class="container">
+
+<div class="type-selector" role="tablist">
+  <button class="type-btn active" data-type="epic"  role="tab">EPIC</button>
+  <button class="type-btn"        data-type="gift"  role="tab">Gift</button>
+  <button class="type-btn"        data-type="ruby"  role="tab">RUBY</button>
+  <button class="type-btn"        data-type="start" role="tab">START</button>
+</div>
+
+<!-- ══ PANEL EPIC ══════════════════════════════════════════════ -->
+<div class="type-panel active" id="panel-epic">
+  <div class="layer-controls">
+    <span class="lc-label">Capas:</span>
+    <button class="lc-btn on" data-panel="epic" data-layer="1"><span class="eye">👁</span> Capa 1 · Efecto</button>
+    <button class="lc-btn on" data-panel="epic" data-layer="2"><span class="eye">👁</span> Capa 2 · Forma</button>
+    <button class="lc-btn on" data-panel="epic" data-layer="3"><span class="eye">👁</span> Capa 3 · Constelación</button>
+  </div>
+  <div class="stage" id="stage-epic">
+    <div class="stage-inner">
+      <img class="slayer l1" id="epic-l1" src="Epic.jpg"   alt="EPIC efecto neon">
+      <img class="slayer l2" id="epic-l2" src="Epic_1.jpg" alt="EPIC anatomía">
+      <img class="slayer l3" id="epic-l3" src="Epic_2.png" alt="EPIC constelación">
+    </div>
+    <!-- Micro HS (capas 1+2) -->
+    <div class="hs" style="top:62%;left:20%;" data-layer="12" data-zone="micro" data-color="#e9c46a" data-title="Serif · Remate filiforme" data-desc="Hairline serif en ángulo recto con el asta. Distinción, tradición culta, tono editorial. Conecta con la tradición Bodoni-Didot de alto refinamiento."></div>
+    <div class="hs" style="top:36%;left:42%;" data-layer="12" data-zone="micro" data-color="#4cc9f0" data-title="Contraste extremo (didona)" data-desc="Máxima oposición entre astas gruesas y filetes finos. Activa: elegancia, sofisticación, dramatismo, lujo. El marcador estético del diseño editorial de alto nivel."></div>
+    <div class="hs" style="top:46%;left:58%;" data-layer="12" data-zone="micro" data-color="#6bcb77" data-title="Modulación vertical · eje 0°" data-desc="Sin inclinación caligráfica, eje perfectamente racional. Connota: orden, control, clasicismo, racionalidad formal. La geometría es precisa, casi mecánica."></div>
+    <div class="hs" style="top:42%;left:81%;" data-layer="12" data-zone="micro" data-color="#b185ff" data-title="Proporción estable · apertura de C" data-desc="Letras anchas/estables, no condensadas. Valor: seguridad, aplomo, monumentalidad moderada. Las contraformas amplias potencian el prestigio visual."></div>
+    <div class="hs" style="top:37%;left:27%;" data-layer="12" data-zone="micro" data-color="#ffd166" data-title="Caja alta · todo mayúsculas" data-desc="Composición exclusiva en mayúsculas display. Valor: épica, solemnidad, jerarquía, proclamación. Anulan la intimidad de la caja baja."></div>
+    <!-- Constellation HS (capa 3) — PRO arriba del radar, PUB abajo -->
+    <div class="hs" style="top:28%;left:48%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Elegancia fría y racionalizada" data-desc="El eje vertical elimina la calidez del humanismo caligráfico; la geometría es precisa, casi mecánica. Percepción profesional: rigor editorial Bodoni-Didot en su vertiente más racional."></div>
+    <div class="hs" style="top:35%;left:65%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Lujo editorial y sofisticación" data-desc="El contraste extremo es el marcador estético de la moda de alto diseño. Percepción profesional: código visual de género editorial (Vogue, revistas de diseño), impone distancia y aspiración."></div>
+    <div class="hs" style="top:33%;left:35%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Tensión visual deliberada" data-desc="Astas ultra-gruesas + hairlines = vibración retiniana que comunica drama controlado. Percepción profesional: dominio técnico del contraste tipográfico, sofisticación evidente."></div>
+    <div class="hs" style="top:75%;left:43%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Autoridad y poder" data-desc="Las mayúsculas y el trazo negro proyectan peso institucional. Percepción pública: 'parece importante, serio, de alta categoría'. Distancia noble, no cercanía afectiva."></div>
+    <div class="hs" style="top:67%;left:35%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Clasicismo contemporáneo" data-desc="Los remates finos anclan en el s. XVIII, el peso negro lo proyecta al presente. Percepción pública: 'parece clásico pero actual', atemporalidad percibida como prestigio."></div>
+    <div class="hs" style="top:67%;left:67%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Marca premium de impacto" data-desc="Alta recordación en contextos de display. Percepción pública: 'parece una marca importante', identidad fuerte, sensación premium e impacto inmediato."></div>
+  </div>
+  <div class="hs-info" id="info-epic"><p class="hi-hint">→ Toca los hotspots <strong>+</strong> (micro), <strong>◉</strong> (profesionales) y <strong>◎</strong> (público) para explorar los atributos</p></div>
+  <div class="attr-table-wrap show" id="attr-epic">
+    <table class="attr-table">
+      <thead><tr><th>Eje</th><th>Observación en EPIC</th><th>Valor connotativo</th></tr></thead>
+      <tbody>
+        <tr><td>Peso</td><td>Peso medio-alto a alto, no "black"</td><td>Solidez, presencia, autoridad</td></tr>
+        <tr><td>Contraste</td><td>Muy alto contraste entre astas gruesas y filetes/remates finos</td><td>Elegancia, sofisticación, dramatismo, lujo</td></tr>
+        <tr><td>Modulación</td><td>Eje claramente vertical, no caligráfico oblicuo</td><td>Orden, control, clasicismo, racionalidad</td></tr>
+        <tr><td>Serif / remate</td><td>Serif fino y refinado, terminaciones limpias y precisas</td><td>Distinción, tradición culta, tono editorial</td></tr>
+        <tr><td>Proporción</td><td>Letras anchas/estables, no condensadas</td><td>Seguridad, aplomo, monumentalidad moderada</td></tr>
+        <tr><td>Caja</td><td>Composición en mayúsculas</td><td>Épica, solemnidad, jerarquía, proclamación</td></tr>
+        <tr><td>Espaciado</td><td>Interletrado aireado y equilibrado para display</td><td>Prestigio, respiración visual, sensación premium</td></tr>
+        <tr><td>Uso probable</td><td>Titular, logotipo o marca; no texto corrido</td><td>Identidad fuerte, recordación, impacto</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="const-panel show" id="const-epic">
+    <div class="const-panel-head">
+      <h4>◈ Constelación de valores connotativos · EPIC</h4>
+      <p>Configuración: <strong>alto contraste + mayúsculas + serif moderna + modulación vertical + espaciado cuidado</strong></p>
+    </div>
+    <div class="const-body">
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#b185ff"></div><span style="color:#b185ff">Percepción profesional</span><span style="color:var(--muted);font-size:9px">&nbsp;· Diseñadores · Comunicadores · Artistas</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Elegancia fría y racionalizada</div><div class="ci-def">El eje vertical elimina la calidez orgánica del humanismo caligráfico; la geometría es precisa, casi mecánica. Tradición Bodoni-Didot en su vertiente más racional.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Lujo y sofisticación editorial</div><div class="ci-def">El contraste extremo opera como código visual de género en moda y cultura de alto diseño. Impone distancia noble y aspiración estética.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Tensión visual deliberada</div><div class="ci-def">Astas ultra-gruesas + hairlines = vibración retiniana que comunica drama controlado. Sofisticación técnica evidente para el ojo profesional.</div></div></div>
+      </div>
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#4cc9f0"></div><span style="color:#4cc9f0">Percepción del público general</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Autoridad y prestigio</div><div class="ci-def">Las mayúsculas y el trazo negro proyectan peso institucional. El público lo percibe como "importante, serio, poderoso". Distancia noble, no cercanía.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Clasicismo contemporáneo</div><div class="ci-def">Los remates finos evocan tradición (s. XVIII) mientras el peso negro actualiza. La percepción es "clásico pero vigente", atemporalidad que inspira confianza.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Identidad de marca fuerte</div><div class="ci-def">Funciona como logotipo o titular de alto impacto. Alta recordación, sensación premium. La palabra "EPIC" potencia el efecto: forma y contenido trabajan en la misma dirección semántica.</div></div></div>
+      </div>
+    </div>
+    <div class="const-formula"><strong>Síntesis:</strong> prestigio, autoridad, teatralidad y elegancia. No comunica cercanía ni espontaneidad; comunica <em>distancia noble, control y aspiración</em>, propio de lo editorial, cultural y de alta gama.</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#e9c46a"></div>Serif</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>Contraste</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#6bcb77"></div>Modulación</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#b185ff"></div>◉ Profesional</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0;border:1px solid #4cc9f0"></div>◎ Público</div>
+  </div>
+</div>
+
+<!-- ══ PANEL GIFT ══════════════════════════════════════════════ -->
+<div class="type-panel" id="panel-gift">
+  <div class="layer-controls">
+    <span class="lc-label">Capas:</span>
+    <button class="lc-btn on" data-panel="gift" data-layer="1"><span class="eye">👁</span> Capa 1 · Efecto</button>
+    <button class="lc-btn on" data-panel="gift" data-layer="2"><span class="eye">👁</span> Capa 2 · Forma</button>
+    <button class="lc-btn on" data-panel="gift" data-layer="3"><span class="eye">👁</span> Capa 3 · Constelación</button>
+  </div>
+  <div class="stage" id="stage-gift">
+    <div class="stage-inner">
+      <img class="slayer l1" id="gift-l1" src="Giff.jpg"   alt="Gift efecto 3D">
+      <img class="slayer l2" id="gift-l2" src="Giff_1.jpg" alt="Gift anatomía">
+      <img class="slayer l3" id="gift-l3" src="Giff_2.png" alt="Gift constelación">
+    </div>
+    <div class="hs" style="top:48%;left:32%;" data-layer="12" data-zone="micro" data-color="#c9184a" data-title="Peso bold / casi black" data-desc="Trazo grueso de alta densidad visual. En Moles: presencia, energía, cercanía enfática. La constelación bold+script activa un campo semántico de afectividad y celebración."></div>
+    <div class="hs" style="top:29%;left:58%;" data-layer="12" data-zone="micro" data-color="#e9c46a" data-title="Terminal redondeado · punto de i" data-desc="Extremo del trazo con curva suave, sin corte angular. Connota: amabilidad, estabilidad, tono amigable. Refuerza la percepción de calidez y accesibilidad emocional."></div>
+    <div class="hs" style="top:40%;left:63%;" data-layer="12" data-zone="micro" data-color="#4cc9f0" data-title="Ligazón script · conexión f-t" data-desc="Continuidad visual entre caracteres sin separación. Activa: fluidez, naturalidad, tono conversacional y relacional. La ligazón es el atributo clave del registro afectivo."></div>
+    <div class="hs" style="top:60%;left:67%;" data-layer="12" data-zone="micro" data-color="#6bcb77" data-title="Inclinación cursiva · dirección gestual" data-desc="Flujo oblicuo de origen caligráfico-manual. Valor: movimiento, dinamismo, impulso, espontaneidad. Elimina la rigidez estructural racional."></div>
+    <div class="hs" style="top:34%;left:43%;" data-layer="12" data-zone="micro" data-color="#ff6b9d" data-title="Modulación orgánica · contraste bajo-medio" data-desc="Variación de grosor manual, no geométrica. Connota: humanidad, gesto personal, voz cálida e individual. La modulación orgánica activa el polo opuesto al racionalismo tipográfico."></div>
+    <div class="hs" style="top:18%;left:46%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Lettering script de fantasía" data-desc="Sin serif; comportamiento de lettering más que de tipografía modular. Percepción profesional: caligrafía expresiva, adecuada para identidad artesanal, branding emocional, packaging festivo."></div>
+    <div class="hs" style="top:35%;left:66%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Voz performativa · firma visual" data-desc="Constelación: trazo bold + forma redondeada + ligazón + gesto caligráfico. Percepción profesional: voz casi como una firma o saludo. Eficaz para eventos, lifestyle, marca personal."></div>
+    <div class="hs" style="top:25%;left:40%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Versatilidad media · registro afectivo" data-desc="Muy eficaz para tono emocional y distintivo; menos adecuada para ámbitos jurídicos, académicos o corporativos sobrios. Percepción profesional: legibilidad display alta, cuerpo corrido baja."></div>
+    <div class="hs" style="top:75%;left:43%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Calidez, regalo, celebración" data-desc="La constelación desplaza la interpretación hacia calidez, simpatía y accesibilidad emocional. Percepción pública: 'simpático, cercano, parece hecho a mano con afecto'. Forma y contenido en la misma dirección."></div>
+    <div class="hs" style="top:67%;left:30%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Informalidad cuidada" data-desc="El bajo contraste y la forma redondeada eliminan toda distancia institucional. Percepción pública: 'juvenil, amigable, para todos, sin pretensiones de seriedad'."></div>
+    <div class="hs" style="top:67%;left:67%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Marca emocional · recordación" data-desc="Alta recordación en contextos breves (logo, rótulo, titular). Percepción pública: impacto afectivo rápido, 'parece una marca conocida y querida'. Campo semántico: regalo, fiesta, vida cotidiana amable."></div>
+  </div>
+  <div class="hs-info" id="info-gift"><p class="hi-hint">→ Toca los hotspots <strong>+</strong> (micro), <strong>◉</strong> (profesionales) y <strong>◎</strong> (público) para explorar los atributos</p></div>
+  <div class="attr-table-wrap show" id="attr-gift">
+    <table class="attr-table">
+      <thead><tr><th>Eje</th><th>Observación en Gift</th><th>Valor connotativo</th></tr></thead>
+      <tbody>
+        <tr><td>Peso</td><td>Trazo bold o casi black, con mucho negro visual</td><td>Presencia, energía, cercanía enfática</td></tr>
+        <tr><td>Contraste</td><td>Bajo a medio-bajo; no hay oposición extrema entre finos y gruesos</td><td>Soltura, informalidad, accesibilidad</td></tr>
+        <tr><td>Dirección</td><td>Predomina inclinación y flujo cursivo/script</td><td>Movimiento, dinamismo, impulso</td></tr>
+        <tr><td>Modulación</td><td>Manual y orgánica, no geométrica</td><td>Humanidad, gesto, voz personal</td></tr>
+        <tr><td>Serif / sans</td><td>Sin serif; lettering script de fantasía</td><td>Cercanía, expresividad, identidad propia</td></tr>
+        <tr><td>Proporción</td><td>Letras anchas y redondeadas, gran ocupación del ancho</td><td>Amabilidad, estabilidad, tono amigable</td></tr>
+        <tr><td>Ligazón</td><td>Conexión visual entre caracteres, continuidad de trazo</td><td>Fluidez, naturalidad, tono conversacional</td></tr>
+        <tr><td>Uso probable</td><td>Logo, rótulo o titular breve; no texto corrido</td><td>Recordación, marca emocional, impacto rápido</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="const-panel show" id="const-gift">
+    <div class="const-panel-head">
+      <h4>◈ Constelación de valores connotativos · Gift</h4>
+      <p>Configuración: <strong>peso alto + curva blanda + continuidad de trazo + gesto caligráfico + baja rigidez estructural</strong></p>
+    </div>
+    <div class="const-body">
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#b185ff"></div><span style="color:#b185ff">Percepción profesional</span><span style="color:var(--muted);font-size:9px">&nbsp;· Diseñadores · Comunicadores · Artistas</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Voz afectiva y performativa</div><div class="ci-def">La ligazón y el flujo cursivo producen una voz casi como una firma o saludo. Más humana y relacional que la tipografía modular. Eficaz para branding artesanal, packaging, lifestyle, eventos.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Legibilidad display alta · cuerpo baja</div><div class="ci-def">Alta legibilidad en titulares breves con contraste cromático fuerte. En texto corrido o cuerpos pequeños, las script/fantasía no son recomendadas profesionalmente.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Versatilidad media · registro emocional</div><div class="ci-def">Muy eficaz para tono emocional y distintivo. Menos adecuada para ámbitos jurídicos, académicos, editoriales de largo aliento o comunicación corporativa sobria.</div></div></div>
+      </div>
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#4cc9f0"></div><span style="color:#4cc9f0">Percepción del público general</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Calidez, simpatía, celebración</div><div class="ci-def">La constelación desplaza la interpretación hacia calidez, regalo y accesibilidad emocional. El público la percibe como cercana, afectuosa, festiva: "hecha con cariño".</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Informalidad cuidada</div><div class="ci-def">El lettering "parece hecho a mano" pero con presencia visual fuerte por el peso. Percepción: juvenil, para todos, sin distancia institucional, invita a acercarse.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Identidad emocional de marca</div><div class="ci-def">La palabra "Gift" refuerza el campo semántico: forma y contenido trabajan en la misma dirección expresiva. Alta recordación afectiva, impacto emocional rápido.</div></div></div>
+      </div>
+    </div>
+    <div class="const-formula"><strong>Síntesis:</strong> tipografía script de fantasía, pesada y orgánica, con tono amable, juvenil y cercano. En la constelación de Moles: cerca de <em>espontaneidad, dinamismo, calidez, personalidad y afectividad</em>; lejos de neutralidad, solemnidad o precisión técnica.</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#c9184a"></div>Peso</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#e9c46a"></div>Terminal</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>Ligazón</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#b185ff"></div>◉ Profesional</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>◎ Público</div>
+  </div>
+</div>
+
+<!-- ══ PANEL RUBY ══════════════════════════════════════════════ -->
+<div class="type-panel" id="panel-ruby">
+  <div class="layer-controls">
+    <span class="lc-label">Capas:</span>
+    <button class="lc-btn on" data-panel="ruby" data-layer="1"><span class="eye">👁</span> Capa 1 · Efecto</button>
+    <button class="lc-btn on" data-panel="ruby" data-layer="2"><span class="eye">👁</span> Capa 2 · Forma</button>
+    <button class="lc-btn on" data-panel="ruby" data-layer="3"><span class="eye">👁</span> Capa 3 · Constelación</button>
+  </div>
+  <div class="stage" id="stage-ruby">
+    <div class="stage-inner">
+      <img class="slayer l1" id="ruby-l1" src="Ruby.jpg"   alt="RUBY efecto rojo">
+      <img class="slayer l2" id="ruby-l2" src="RUBY_1.jpg" alt="RUBY anatomía">
+      <img class="slayer l3" id="ruby-l3" src="RUBY_2.png" alt="RUBY constelación">
+    </div>
+    <div class="hs" style="top:47%;left:17%;" data-layer="12" data-zone="micro" data-color="#c9184a" data-title="Peso black · asta vertical" data-desc="Astas verticales de máximo grosor (lógica didona). Connota: autoridad sin afecto, peso institucional, presencia monumental. El peso negro es el atributo más dominante de la constelación."></div>
+    <div class="hs" style="top:61%;left:42%;" data-layer="12" data-zone="micro" data-color="#4cc9f0" data-title="Contraste extremo · trazos gruesos/finos" data-desc="Máxima oposición entre astas y filetes filiformes. Característica definitoria de la romana moderna/didona. Activa: elegancia fría, lujo, sofisticación. Marcador estético del alto diseño."></div>
+    <div class="hs" style="top:35%;left:60%;" data-layer="12" data-zone="micro" data-color="#e9c46a" data-title="Remates filiformes · hairline serif" data-desc="Terminaciones horizontales ultra-delgadas en ángulo recto. Unión angular sin empaste. Valor: clasicismo contemporáneo, tensión visual deliberada, drama controlado entre masa y fragilidad."></div>
+    <div class="hs" style="top:49%;left:78%;" data-layer="12" data-zone="micro" data-color="#6bcb77" data-title="Eje de modulación vertical (0°)" data-desc="Sin inclinación caligráfica. Eje perfectamente racional (modulación vertical racionalista). Connota: precisión mecánica, glamour monumental, frialdad estética elegante."></div>
+    <div class="hs" style="top:35%;left:36%;" data-layer="12" data-zone="micro" data-color="#ffd166" data-title="Caja alta · todo mayúsculas" data-desc="Composición exclusiva en mayúsculas. Anulan la intimidad de la caja baja. Valor: glamour proclamado, distancia noble, lenguaje de marca de lujo institucional."></div>
+    <div class="hs" style="top:38%;left:48%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Elegancia fría y racionalizada" data-desc="El eje vertical elimina la calidez orgánica del humanismo caligráfico; la geometría es precisa, casi mecánica. Percepción profesional: tipología Bodoni-Didot en su vertiente más racional y editorial."></div>
+    <div class="hs" style="top:30%;left:65%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Lujo y sofisticación" data-desc="El contraste extremo es el marcador estético de la moda de alto diseño (Vogue, Givenchy, BALMAIN). Percepción profesional: código visual de género de lujo, impone aspiración y distancia noble."></div>
+    <div class="hs" style="top:24%;left:38%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Tensión visual deliberada" data-desc="Trazos ultra-gruesos + hairlines = vibración retiniana que comunica drama controlado. Percepción profesional: dominio técnico del contraste al límite. Esta posición es opuesta a 'extra-light + sans humanista' (delicadeza/tecnología)."></div>
+    <div class="hs" style="top:75%;left:43%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Autoridad sin afecto" data-desc="Las mayúsculas y el trazo negro proyectan peso institucional. Percepción pública: 'parece una marca importante, seria, cara'. Distancia noble, no cercanía. Glamour percibido como inalcanzable."></div>
+    <div class="hs" style="top:67%;left:33%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Clasicismo contemporáneo" data-desc="Los remates finos anclan en el s. XVIII, el peso negro proyecta hacia el presente. Percepción pública: 'parece antiguo y moderno a la vez', elegancia atemporal que inspira confianza."></div>
+    <div class="hs" style="top:67%;left:67%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Glamour y moda de lujo" data-desc="Identidad de moda, cosmética o lujo. Percepción pública: 'es una marca de lujo', glamour monumental. Karen Cheng señala que los hairlines 'equilibran el peso del asta vertical', generando tensión dinámica entre masa y fragilidad."></div>
+  </div>
+  <div class="hs-info" id="info-ruby"><p class="hi-hint">→ Toca los hotspots <strong>+</strong> (micro), <strong>◉</strong> (profesionales) y <strong>◎</strong> (público) para explorar los atributos</p></div>
+  <div class="attr-table-wrap show" id="attr-ruby">
+    <table class="attr-table">
+      <thead><tr><th>Atributo</th><th>Descripción en RUBY</th><th>Valor connotativo</th></tr></thead>
+      <tbody>
+        <tr><td>Peso</td><td>Black / Bold — astas verticales de máximo grosor</td><td>Autoridad sin afecto, peso institucional</td></tr>
+        <tr><td>Contraste</td><td>Extremo: relación grueso/fino muy acentuada, típicamente didona</td><td>Elegancia fría, lujo, sofisticación editorial</td></tr>
+        <tr><td>Eje modulación</td><td>Vertical racionalista (0°), sin inclinación caligráfica</td><td>Precisión mecánica, glamour monumental</td></tr>
+        <tr><td>Remates</td><td>Filiformes horizontales, unión angular con el asta sin empaste</td><td>Clasicismo contemporáneo, tensión visual</td></tr>
+        <tr><td>Proporciones</td><td>Normal, ni condensada ni extendida</td><td>Equilibrio, aplomo, monumentalidad</td></tr>
+        <tr><td>Apertura</td><td>Media-baja: contraformas reducidas por el peso negro</td><td>Densidad visual, concentración de fuerza</td></tr>
+        <tr><td>Caja</td><td>Exclusivamente mayúsculas (display)</td><td>Glamour proclamado, distancia noble, lujo</td></tr>
+        <tr><td>Estilo</td><td>Romana moderna/didona, cursividad nula</td><td>Tradición s. XVIII actualizada, drama controlado</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="const-panel show" id="const-ruby">
+    <div class="const-panel-head">
+      <h4>◈ Constelación de valores connotativos · RUBY</h4>
+      <p>Configuración: <strong>black + didona + eje vertical + hairline serifs + todo mayúsculas</strong></p>
+    </div>
+    <div class="const-body">
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#b185ff"></div><span style="color:#b185ff">Percepción profesional</span><span style="color:var(--muted);font-size:9px">&nbsp;· Diseñadores · Comunicadores · Artistas</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Elegancia fría y racionalizada</div><div class="ci-def">El eje vertical elimina la calidez orgánica del humanismo caligráfico; la geometría es precisa, casi mecánica. Tradición Bodoni-Didot en su vertiente más racional y contemporánea.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Lujo y sofisticación</div><div class="ci-def">El contraste extremo es el marcador estético de la moda de alto diseño. Vogue, Givenchy, BALMAIN usan variantes de esta constelación como código visual de género de lujo.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Tensión visual deliberada</div><div class="ci-def">Trazos ultra-gruesos + hairlines = vibración retiniana que comunica drama controlado. Polo opuesto a "extra-light + alta x + sans humanista" (delicadeza/tecnología). La elegancia supera a la crudeza.</div></div></div>
+      </div>
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#4cc9f0"></div><span style="color:#4cc9f0">Percepción del público general</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Autoridad sin afecto</div><div class="ci-def">Las mayúsculas anulan la intimidad de la caja baja; el trazo negro proyecta peso institucional. El público lo percibe como "caro, importante, distante y aspiracional".</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Clasicismo contemporáneo</div><div class="ci-def">Remates finos (s. XVIII) + peso negro (presente) = atemporalidad percibida. El público la lee como "un clásico actualizado", elegancia que no caduca.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Glamour y moda de lujo</div><div class="ci-def">Asociada a marcas de moda, cosmética y lujo. Alta legibilidad en display, baja en cuerpo corrido (hairlines se pierden). Concebida para ser vista, no leída. Glamour monumental: tensión entre masa y fragilidad.</div></div></div>
+      </div>
+    </div>
+    <div class="const-formula"><strong>Síntesis:</strong> cuadrante de máximo peso + máximo contraste = <em>glamour monumental</em>. Se aleja de "black + condensada + serif mecana" (contundencia/industrial): aquí la elegancia supera a la crudeza. El fondo blanco amplifica el contraste y actúa como silencio que potencia el drama tipográfico.</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#c9184a"></div>Peso black</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>Contraste</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#e9c46a"></div>Hairline serif</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#b185ff"></div>◉ Profesional</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>◎ Público</div>
+  </div>
+</div>
+
+<!-- ══ PANEL START ══════════════════════════════════════════════ -->
+<div class="type-panel" id="panel-start">
+  <div class="layer-controls">
+    <span class="lc-label">Capas:</span>
+    <button class="lc-btn on" data-panel="start" data-layer="1"><span class="eye">👁</span> Capa 1 · Efecto</button>
+    <button class="lc-btn on" data-panel="start" data-layer="2"><span class="eye">👁</span> Capa 2 · Forma</button>
+    <button class="lc-btn on" data-panel="start" data-layer="3"><span class="eye">👁</span> Capa 3 · Constelación</button>
+  </div>
+  <div class="stage" id="stage-start">
+    <div class="stage-inner">
+      <img class="slayer l1" id="start-l1" src="star.jpg"   alt="START efecto dorado">
+      <img class="slayer l2" id="start-l2" src="star_1.jpg" alt="START anatomía">
+      <img class="slayer l3" id="start-l3" src="star_2.png" alt="START constelación">
+    </div>
+    <div class="hs" style="top:43%;left:27%;" data-layer="12" data-zone="micro" data-color="#e9c46a" data-title="Terminal angular · letra S" data-desc="Corte diagonal en el extremo de la S, sin curva ni serif. La S dinamiza visualmente el punto de arranque de la secuencia. Activa: velocidad, punto de inicio, corte limpio y decisivo."></div>
+    <div class="hs" style="top:35%;left:34%;" data-layer="12" data-zone="micro" data-color="#ffd166" data-title="All caps · proporción condensada" data-desc="Solo mayúsculas con relación ancho/alto muy estrecha. Connota: imperatividad, comando, autoridad instantánea. El condensado simula un impulso ascendente, un disparo de salida."></div>
+    <div class="hs" style="top:50%;left:51%;" data-layer="12" data-zone="micro" data-color="#4cc9f0" data-title="Contraformas mínimas · letra A" data-desc="Espacios internos rectangulares muy reducidos. Valor: densidad, tensión interna, energía concentrada lista para liberarse. Las contraformas mínimas intensifican la percepción de compresión cinética."></div>
+    <div class="hs" style="top:44%;left:60%;" data-layer="12" data-zone="micro" data-color="#c9184a" data-title="Peso black · condensado" data-desc="Astas verticales dominantes con relación ancho/alto estrecha. Connota: velocidad, impulso ascendente, presión cinética. Black + condensada es la constelación de lo deportivo-industrial-urgente."></div>
+    <div class="hs" style="top:50%;left:71%;" data-layer="12" data-zone="micro" data-color="#6bcb77" data-title="Monolineal sans grotesca · letra T" data-desc="Bajo contraste entre trazos, sin remates. La T cierra con su remate horizontal plano como señal de partida. Connota: modernidad industrial, neutralidad técnica, funcionalidad pura sin ruido histórico."></div>
+    <div class="hs" style="top:30%;left:51%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Convergencia forma-contenido" data-desc="La tipografía no ilustra el verbo START: lo amplifica y ejecuta performativamente. La S dinamiza el arranque, la T cierra como señal de partida. Percepción profesional: uso consciente y preciso de la constelación semántica."></div>
+    <div class="hs" style="top:30%;left:68%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Robustez urbana / deportiva" data-desc="Black + condensada + grotesca = universo de marcas de rendimiento, videojuegos, señalética de alta tensión. Como señala Vox, las grotescas lineales fueron creadas para rotulación y publicidad de alto impacto visual."></div>
+    <div class="hs" style="top:31%;left:31%;" data-layer="3" data-zone="pro" data-color="#b185ff" data-title="PRO · Neutralidad funcional" data-desc="Ausencia de remates y bajo contraste eliminan toda referencia histórica o decorativa. Percepción profesional: eficacia comunicativa pura, adecuada para contextos de urgencia visual donde el ornamento sería ruido semántico."></div>
+    <div class="hs" style="top:75%;left:43%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Acción inmediata" data-desc="Reforzada por el verbo imperativo 'START'. Percepción pública: 'hay que hacer algo ahora, de inmediato'. La tipografía activa una respuesta instintiva de urgencia y acción. Kane: 'todas las tipografías sugieren las aplicaciones para las que son adecuadas'."></div>
+    <div class="hs" style="top:67%;left:30%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Velocidad y urgencia" data-desc="El condensado vertical simula un impulso ascendente, un disparo de salida. Percepción pública: 'rápido, dinámico, enérgico'. Asociado a videojuegos, deporte y tecnología de rendimiento."></div>
+    <div class="hs" style="top:67%;left:67%;" data-layer="3" data-zone="pub" data-color="#4cc9f0" data-title="PÚB · Fuerza cinética concentrada" data-desc="Constelación semántica: fuerza cinética → acción → ruptura del reposo. Percepción pública: 'esta tipografía comunica que algo va a explotar'. Polo opuesto a la extra-light humanista (fragilidad/tecnología refinada)."></div>
+  </div>
+  <div class="hs-info" id="info-start"><p class="hi-hint">→ Toca los hotspots <strong>+</strong> (micro), <strong>◉</strong> (profesionales) y <strong>◎</strong> (público) para explorar los atributos</p></div>
+  <div class="attr-table-wrap show" id="attr-start">
+    <table class="attr-table">
+      <thead><tr><th>Atributo formal</th><th>Descripción en START</th><th>Valor connotativo activado</th></tr></thead>
+      <tbody>
+        <tr><td>Peso</td><td>Black / Extranegra — trazo ocupa casi todo el espacio positivo</td><td>Contundencia, presión, urgencia</td></tr>
+        <tr><td>Proporción</td><td>Condensada — relación ancho/alto marcadamente estrecha, astas verticales dominantes</td><td>Velocidad, impulso ascendente, disparo de salida</td></tr>
+        <tr><td>Modulación</td><td>Casi monolineal — bajo contraste entre gruesos y finos</td><td>Modernidad industrial, neutralidad técnica</td></tr>
+        <tr><td>Eje</td><td>Vertical — sin inclinación caligráfica, modulación estrictamente racional</td><td>Racionalidad pura, eficiencia funcional</td></tr>
+        <tr><td>Familia</td><td>Sans grotesca — terminales cortados en ángulo diagonal (visible en S)</td><td>Dinamismo, corte limpio, ruptura del reposo</td></tr>
+        <tr><td>Caja</td><td>Solo mayúsculas (all caps)</td><td>Imperatividad, comando, autoridad instantánea</td></tr>
+        <tr><td>Contraformas</td><td>Muy cerradas y rectangulares; mínimas en R, A y T</td><td>Densidad, tensión, energía concentrada</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="const-panel show" id="const-start">
+    <div class="const-panel-head">
+      <h4>◈ Constelación de valores connotativos · START</h4>
+      <p>Configuración: <strong>black + condensada + sans grotesca + all caps + terminales angulares</strong></p>
+    </div>
+    <div class="const-body">
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#b185ff"></div><span style="color:#b185ff">Percepción profesional</span><span style="color:var(--muted);font-size:9px">&nbsp;· Diseñadores · Comunicadores · Artistas</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Convergencia forma-contenido</div><div class="ci-def">La tipografía amplifica y ejecuta el verbo START. La S dinámica inicia; la T horizontal cierra como señal de partida. Kane: la tipografía no ilustra, transmite actitudes específicas que encarnan el significado.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Robustez urbana / deportiva</div><div class="ci-def">Black + condensada + grotesca = universo de marcas de rendimiento, videojuegos y señalética de alta tensión. Las lineales grotescas (Vox) fueron creadas para rotulación y publicidad de máximo impacto.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#b185ff"></div><div><div class="ci-name">Neutralidad funcional</div><div class="ci-def">Sin remates ni contraste = sin referencias históricas ni decorativas. Percepción profesional: eficacia comunicativa pura, adecuada para urgencia visual. Polo opuesto a la delicadeza/tecnología de la sans humanista light.</div></div></div>
+      </div>
+      <div class="const-col">
+        <div class="const-col-title"><div class="zone-dot" style="background:#4cc9f0"></div><span style="color:#4cc9f0">Percepción del público general</span></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Acción inmediata</div><div class="ci-def">El verbo imperativo "START" + la forma visual = respuesta instintiva. Percepción pública: "hay que hacer algo ahora". Efecto performativo entre forma tipográfica y contenido verbal que se refuerzan mutuamente.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Velocidad y urgencia</div><div class="ci-def">El condensado simula un impulso ascendente, un disparo de salida. Percepción pública: "rápido, enérgico, para la acción". Universo mental: videojuegos, deporte, tecnología de alto rendimiento.</div></div></div>
+        <div class="const-item"><div class="ci-bullet" style="background:#4cc9f0"></div><div><div class="ci-name">Fuerza cinética concentrada</div><div class="ci-def">Constelación semántica: fuerza cinética → acción → ruptura del reposo. Polo opuesto a lo delicado/elegante. El público lo percibe como contundente, masculino, urbano: "una tipografía que va a explotar".</div></div></div>
+      </div>
+    </div>
+    <div class="const-formula"><strong>Síntesis:</strong> cuadrante <em>deportivo-industrial-urgente</em>. Fuerza cinética concentrada → acción → ruptura del reposo. Esta combinación black-condensada-grotesca ocupa el polo opuesto a lo delicado/elegante. La convergencia entre forma y contenido es total: la tipografía no ilustra el verbo START, lo ejecuta.</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="leg-dot" style="background:#e9c46a"></div>Terminal angular</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#c9184a"></div>Peso condensado</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#6bcb77"></div>Monolineal</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#b185ff"></div>◉ Profesional</div>
+    <div class="legend-item"><div class="leg-dot" style="background:#4cc9f0"></div>◎ Público</div>
+  </div>
+</div>
+
+<!-- ─── DIVIDER ───────────────────────────────────────────── -->
+<div class="sec-div"><span>Evaluación Tipográfica</span></div>
+
+<!-- ══ FORMULARIO ════════════════════════════════════════════ -->
+<div class="form-wrap">
+  <h2>Evaluación Tipográfica</h2>
+  <p class="fp">Semana 3 · Constelación de Atributos de Moles · Todos los campos marcados con * son obligatorios</p>
+  <form id="quiz" novalidate autocomplete="off">
+    <input type="hidden" name="_subject"  value="Evaluación Tipográfica – Atributos de Moles">
+    <input type="hidden" name="_cc"       id="f-cc">
+    <input type="hidden" name="_captcha"  value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="tipografia_analizada" id="f-type" value="EPIC">
+    <div class="f-row">
+      <div class="f-group" id="grp-nombre">
+        <label for="f-nombre">Nombre completo *</label>
+        <input type="text" id="f-nombre" name="nombre" placeholder="Tu nombre completo" required>
+        <span class="f-err">Campo obligatorio</span>
+      </div>
+      <div class="f-group" id="grp-email">
+        <label for="f-email">Correo electrónico *</label>
+        <input type="email" id="f-email" name="email" placeholder="tucorreo@utp.edu.pe" required>
+        <span class="f-err">Ingresa un correo válido</span>
+      </div>
+    </div>
+    <div class="q-block" id="grp-q1">
+      <h3><span class="qn">Pregunta 01 · Identificación formal</span>¿Qué combinación de atributos describe mejor la tipografía de "EPIC"?</h3>
+      <label class="radio-row"><input type="radio" name="q1" value="a"> Sans geométrica monolineal, peso regular, caja baja</label>
+      <label class="radio-row"><input type="radio" name="q1" value="b"> Serif moderna (didona), contraste extremo, mayúsculas, espaciado display</label>
+      <label class="radio-row"><input type="radio" name="q1" value="c"> Script caligráfica bold con ligazón y terminales redondeados</label>
+      <label class="radio-row"><input type="radio" name="q1" value="d"> Grotesca condensada black, sin remates, monolineal</label>
+      <span class="q-err">Selecciona una opción</span>
+    </div>
+    <div class="q-block" id="grp-q2">
+      <h3><span class="qn">Pregunta 02 · Constelación connotativa</span>La combinación "extra-light + alta altura de x + sans humanista" activa en la constelación de Moles (señala todos los que apliquen):</h3>
+      <label class="check-row"><input type="checkbox" name="q2" value="del-tec"> Delicadeza / tecnología refinada</label>
+      <label class="check-row"><input type="checkbox" name="q2" value="con-ind"> Contundencia / industria</label>
+      <label class="check-row"><input type="checkbox" name="q2" value="esp-cal"> Espontaneidad / calidez afectiva</label>
+      <label class="check-row"><input type="checkbox" name="q2" value="ele-cla"> Elegancia clásica / dramatismo editorial</label>
+    </div>
+    <div class="q-block" id="grp-q3">
+      <h3><span class="qn">Pregunta 03 · Atributo formal y connotación</span>En "START", ¿qué conjunto de atributos genera la connotación de urgencia y acción inmediata?</h3>
+      <label class="radio-row"><input type="radio" name="q3" value="a"> Serif filiforme + contraste extremo didona + caja baja</label>
+      <label class="radio-row"><input type="radio" name="q3" value="b"> Ligazón script + modulación orgánica + terminales redondeados</label>
+      <label class="radio-row"><input type="radio" name="q3" value="c"> Peso black + condensada + terminales angulares + all caps</label>
+      <label class="radio-row"><input type="radio" name="q3" value="d"> Espaciado aireado + modulación oblicua + peso regular</label>
+      <span class="q-err">Selecciona una opción</span>
+    </div>
+    <div class="q-block" id="grp-q4">
+      <h3><span class="qn">Pregunta 04 · Retícula y constelación en página</span>¿Cómo altera la jerarquía cambiar el nodo dominante de "black display" a "light cuerpo"?</h3>
+      <label class="radio-row"><input type="radio" name="q4" value="a"> Aumenta el peso del nodo y refuerza la autoridad institucional</label>
+      <label class="radio-row"><input type="radio" name="q4" value="b"> Reduce el peso del nodo, crea mayor silencio visual y desplaza la jerarquía hacia otros elementos</label>
+      <label class="radio-row"><input type="radio" name="q4" value="c"> No altera la constelación; posición en retícula es independiente del peso tipográfico</label>
+      <label class="radio-row"><input type="radio" name="q4" value="d"> Elimina el contraste y produce composición monolineal en toda la página</label>
+      <span class="q-err">Selecciona una opción</span>
+    </div>
+    <div class="q-block">
+      <h3><span class="qn">Pregunta 05 · Análisis abierto</span>Elige UNA tipografía. Explica una decisión tipográfica identificando el atributo formal y el valor psicológico que activa según la constelación de Moles.</h3>
+      <div class="f-group" id="grp-q5">
+        <label for="f-q5">Tu análisis (mínimo 3 oraciones) *</label>
+        <textarea id="f-q5" name="q5" required placeholder="Ej: En RUBY, el contraste extremo didona (atributo formal) activa los valores de elegancia fría y sofisticación (valor psicológico), porque las astas negras en oposición a los hairlines generan una tensión retiniana asociada al mundo de la moda de alto diseño..."></textarea>
+        <span class="f-err">Campo obligatorio</span>
+      </div>
+    </div>
+    <div class="q-block">
+      <h3><span class="qn">Pregunta 06 · Retícula y tono de voz</span>Describe cómo la constelación de moles en la página (retícula) refuerza o contradice el tono de voz tipográfico en uno de los ejemplos.</h3>
+      <div class="f-group" id="grp-q6">
+        <label for="f-q6">Tu descripción *</label>
+        <textarea id="f-q6" name="q6" required placeholder="Ej: En GIFT, el lettering script centrado ocupa el nodo dominante de la retícula. Su masa visual y trazo bold concentran la atención en el centro de la composición, reforzando..."></textarea>
+        <span class="f-err">Campo obligatorio</span>
+      </div>
+    </div>
+    <div class="q-block">
+      <h3><span class="qn">Pregunta 07 · Propuesta creativa</span>Propón una modificación de atributo en uno de los ejemplos y justifica su impacto semántico según Moles.</h3>
+      <div class="f-group" id="grp-q7">
+        <label for="f-q7">Tu propuesta y justificación *</label>
+        <textarea id="f-q7" name="q7" required placeholder="Ej: Si cambiara START de condensada a extendida, el atributo de proporción cambiaría su vector connotativo de urgencia/velocidad hacia..."></textarea>
+        <span class="f-err">Campo obligatorio</span>
+      </div>
+    </div>
+    <div class="sub-area">
+      <button type="submit" class="btn-sub" id="btn-sub">Enviar evaluación</button>
+    </div>
+    <div class="f-msg ok"  id="msg-ok"><strong>¡Evaluación enviada correctamente!</strong><br>Se envió una copia a tu correo y al docente. Revisa tu bandeja (y carpeta de spam).</div>
+    <div class="f-msg err" id="msg-err"><strong>Error al enviar.</strong><br>Verifica tu conexión o envía directamente a <a href="mailto:c12139@utp.edu.pe" style="color:var(--red)">c12139@utp.edu.pe</a>.</div>
+  </form>
+</div>
+
+</div><!-- /container -->
+
+<footer>Docente: Mg Mario Quiroz &nbsp;·&nbsp; Curso: Tipografía &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Semana 3</footer>
+
+<!-- Tooltip global — position:fixed en body, nunca recortado -->
+<div id="g-tip">
+  <div class="tp-zone" id="t-zone"></div>
+  <div class="tp-title" id="t-title"></div>
+  <div class="tp-desc"  id="t-desc"></div>
+</div>
+
+<script>
+/* ── 1. LAYER TOGGLE ────────────────────────────────────────── */
+document.querySelectorAll('.lc-btn').forEach(btn => {
+  const panel = btn.dataset.panel;
+  const layer = btn.dataset.layer;
+  const img   = document.getElementById(panel + '-l' + layer);
+  const stage = document.getElementById('stage-' + panel);
+
+  btn.addEventListener('click', () => {
+    const wasOn = btn.classList.contains('on');
+    btn.classList.toggle('on',  !wasOn);
+    btn.classList.toggle('off',  wasOn);
+    if (img) img.classList.toggle('hidden', wasOn);
+
+    // Update hotspot visibility
+    if (!stage) return;
+    stage.querySelectorAll('.hs').forEach(hs => {
+      const hlayer = hs.dataset.layer; // "12" or "3"
+      if (layer === '3' && hlayer === '3') {
+        hs.style.visibility = wasOn ? 'hidden' : '';
+      }
+      if ((layer === '1' || layer === '2') && hlayer === '12') {
+        // Show if either layer 1 or layer 2 is on
+        const b1 = document.querySelector(`.lc-btn[data-panel="${panel}"][data-layer="1"]`);
+        const b2 = document.querySelector(`.lc-btn[data-panel="${panel}"][data-layer="2"]`);
+        const either = (b1 && b1.classList.contains('on')) || (b2 && b2.classList.contains('on'));
+        hs.style.visibility = either ? '' : 'hidden';
+      }
+    });
+  });
+});
+
+/* ── 2. TOOLTIP ─────────────────────────────────────────────── */
+const tip    = document.getElementById('g-tip');
+const tZone  = document.getElementById('t-zone');
+const tTitle = document.getElementById('t-title');
+const tDesc  = document.getElementById('t-desc');
+
+function showTip(hs, cx, cy) {
+  const TW = 310, TH = 160;
+  const r  = hs.getBoundingClientRect();
+  let x = (cx != null ? cx : r.left + r.width / 2) - TW / 2;
+  let y = (cy != null ? cy : r.top) - TH - 14;
+  if (y < 8) y = r.bottom + 10;
+  x = Math.max(8, Math.min(x, window.innerWidth  - TW - 8));
+  y = Math.max(8, Math.min(y, window.innerHeight - TH - 8));
+
+  const zone = hs.dataset.zone;
+  const [zLabel, zColor] =
+    zone === 'pro'   ? ['◉ Percepción profesional · Diseñadores · Comunicadores · Artistas', '#b185ff'] :
+    zone === 'pub'   ? ['◎ Percepción del público general', '#4cc9f0'] :
+                       ['◉ Atributo tipográfico · nivel micro', hs.dataset.color || '#e9c46a'];
+
+  tip.style.borderLeftColor = zColor;
+  tZone.style.color = zColor;
+  tZone.textContent  = zLabel;
+  tTitle.textContent = hs.dataset.title || '';
+  tDesc.textContent  = hs.dataset.desc  || '';
+  tip.style.left    = x + 'px';
+  tip.style.top     = y + 'px';
+  tip.style.opacity = '1';
+}
+function hideTip() { tip.style.opacity = '0'; }
+
+/* ── 3. HOTSPOT EVENTS ──────────────────────────────────────── */
+document.querySelectorAll('.hs').forEach(hs => {
+  const panelEl = hs.closest('.type-panel');
+  const pid     = panelEl ? panelEl.id.replace('panel-','') : '';
+  const infoEl  = document.getElementById('info-' + pid);
+
+  function activate(cx, cy) {
+    showTip(hs, cx, cy);
+    if (infoEl) {
+      const zone = hs.dataset.zone;
+      const [zL, zC] =
+        zone === 'pro' ? ['◉ Percepción profesional · Diseñadores · Comunicadores · Artistas', '#b185ff'] :
+        zone === 'pub' ? ['◎ Percepción del público general', '#4cc9f0'] :
+                         ['◉ Atributo tipográfico · nivel micro', hs.dataset.color || '#e9c46a'];
+      infoEl.innerHTML = `<div class="hi-zone" style="color:${zC}">${zL}</div>
+        <div class="hi-title" style="color:${zC}">${hs.dataset.title}</div>
+        <div class="hi-desc">${hs.dataset.desc}</div>`;
+      infoEl.classList.add('lit');
+      infoEl.style.borderLeftColor = zC;
+    }
+    hs.classList.add('on');
+  }
+  function deactivate() { hideTip(); hs.classList.remove('on'); }
+
+  hs.addEventListener('mouseenter', () => activate());
+  hs.addEventListener('mouseleave', deactivate);
+  hs.addEventListener('click', e => { e.stopPropagation(); hs.classList.contains('on') ? deactivate() : activate(e.clientX, e.clientY); });
+  hs.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; hs.classList.contains('on') ? deactivate() : activate(t.clientX, t.clientY); }, {passive:false});
+});
+document.addEventListener('click', () => { hideTip(); document.querySelectorAll('.hs.on').forEach(h => h.classList.remove('on')); });
+
+/* ── 4. TYPEFACE TABS ───────────────────────────────────────── */
+document.querySelectorAll('.type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.type-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.type).classList.add('active');
+    const f = document.getElementById('f-type');
+    if (f) f.value = btn.textContent.trim();
+    hideTip();
+  });
+});
+
+/* ── 5. FORM ────────────────────────────────────────────────── */
+function chkText(id,gid){const e=document.getElementById(id),g=document.getElementById(gid);const ok=e&&e.value.trim().length>0;g&&g.classList.toggle('bad',!ok);return ok}
+function chkEmail(id,gid){const e=document.getElementById(id),g=document.getElementById(gid);const ok=e&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim());g&&g.classList.toggle('bad',!ok);return ok}
+function chkRadio(name,bid){const b=document.getElementById(bid);const ok=!!document.querySelector(`input[name="${name}"]:checked`);if(b){b.classList.toggle('bad',!ok);const e=b.querySelector('.q-err');if(e)e.style.display=ok?'none':'block'}return ok}
+
+['f-nombre','f-email','f-q5','f-q6','f-q7'].forEach(id=>{
+  const el=document.getElementById(id);if(!el)return;
+  el.addEventListener('blur',()=>{if(id==='f-email')chkEmail(id,'grp-email');else chkText(id,'grp-'+id.replace('f-',''))});
+});
+
+document.getElementById('quiz').addEventListener('submit',async e=>{
+  e.preventDefault();
+  let ok=true;
+  ok=chkText('f-nombre','grp-nombre')&&ok;
+  ok=chkEmail('f-email','grp-email')&&ok;
+  ok=chkRadio('q1','grp-q1')&&ok;
+  ok=chkRadio('q3','grp-q3')&&ok;
+  ok=chkRadio('q4','grp-q4')&&ok;
+  ok=chkText('f-q5','grp-q5')&&ok;
+  ok=chkText('f-q6','grp-q6')&&ok;
+  ok=chkText('f-q7','grp-q7')&&ok;
+  if(!ok){const first=document.querySelector('.f-group.bad,.q-block.bad');if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return}
+
+  const btn=document.getElementById('btn-sub');
+  const msgOk=document.getElementById('msg-ok');
+  const msgErr=document.getElementById('msg-err');
+  document.getElementById('f-cc').value=document.getElementById('f-email').value.trim();
+  btn.disabled=true;btn.textContent='Enviando…';msgErr.style.display='none';
+
+  try{
+    const fd=new FormData(e.target);
+    const res=await fetch('https://formsubmit.co/ajax/c12139@utp.edu.pe',{method:'POST',body:fd,headers:{Accept:'application/json'}});
+    const data=await res.json().catch(()=>({}));
+    if(data.success==='true'||data.success===true||res.ok){e.target.style.display='none';msgOk.style.display='block'}
+    else throw new Error();
+  }catch(_){btn.disabled=false;btn.textContent='Enviar evaluación';msgErr.style.display='block';setTimeout(()=>msgErr.style.display='none',7000)}
+});
+
+
+/* ══════════════════════════════════════════════════════════════
+   PWA — Service Worker  +  Install Prompt
+══════════════════════════════════════════════════════════════ */
+
+// — Registrar Service Worker —
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registrado ✓', reg.scope))
+      .catch(err => console.warn('[SW] No se pudo registrar:', err));
+  });
+}
+
+// — Install Prompt —
+let _deferredPrompt = null;
+const _btnInstall   = document.getElementById('btn-install');
+const _toast        = document.getElementById('pwa-toast');
+const _closeToast   = document.getElementById('close-toast');
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  _btnInstall.classList.add('visible');
+  // Mostrar toast informativo a los 2 s
+  setTimeout(() => _toast.classList.add('show'), 2000);
+});
+
+_btnInstall.addEventListener('click', async () => {
+  if (!_deferredPrompt) return;
+  _deferredPrompt.prompt();
+  const { outcome } = await _deferredPrompt.userChoice;
+  console.log('[PWA] Install outcome:', outcome);
+  _deferredPrompt = null;
+  _btnInstall.classList.remove('visible');
+  _toast.classList.remove('show');
+});
+
+_closeToast.addEventListener('click', () => _toast.classList.remove('show'));
+
+window.addEventListener('appinstalled', () => {
+  _btnInstall.classList.remove('visible');
+  _toast.classList.remove('show');
+  _deferredPrompt = null;
+  console.log('[PWA] App instalada ✓');
+});
+
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FAB TOOLBAR  —  Guardar PDF  +  Instalar como App (PWA)
+══════════════════════════════════════════════════════════════ -->
+<div class="fab-bar" role="toolbar" aria-label="Acciones rápidas">
+
+  <!-- Botón Instalar PWA (sólo aparece si el navegador lo soporta) -->
+  <button class="fab fab-install" id="btn-install" aria-label="Instalar app en el dispositivo">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+         viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Instalar app
+  </button>
+
+  <!-- Botón Guardar PDF / Imprimir -->
+  <button class="fab fab-print" id="btn-print"
+          onclick="window.print()" aria-label="Guardar como PDF o imprimir">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+         viewBox="0 0 24 24" aria-hidden="true">
+      <polyline points="6 9 6 2 18 2 18 9"/>
+      <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+      <rect x="6" y="14" width="12" height="8"/>
+    </svg>
+    Guardar PDF
+  </button>
+
+</div><!-- /.fab-bar -->
+
+<!-- PWA Install Toast -->
+<div class="pwa-toast" id="pwa-toast" role="status" aria-live="polite">
+  <button class="ct" id="close-toast" aria-label="Cerrar">×</button>
+  <strong>📲 Instalar como App</strong>
+  Funciona sin internet e instálala en tu dispositivo como app nativa.
+</div>
+
+</body>
+</html>
