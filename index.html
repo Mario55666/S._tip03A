@@ -177,6 +177,48 @@ header p{font:400 12px/1 var(--ff-m);letter-spacing:.08em;color:var(--muted);mar
 .radio-row input,.check-row input{width:15px;height:15px;flex-shrink:0;margin-top:2px;accent-color:var(--gold);cursor:pointer}
 .q-err{font:400 10.5px/1 var(--ff-m);color:var(--red);display:none;padding:3px 12px 0}
 .q-block.bad .q-err{display:block}
+
+/* ── RETROALIMENTACIÓN EN TIEMPO REAL ── */
+.q-feedback{
+  display:none;margin-top:12px;border-radius:7px;
+  padding:12px 16px;font-size:13px;line-height:1.6;
+  border:1px solid transparent;
+  animation:fbIn .25s cubic-bezier(.16,1,.3,1);
+}
+@keyframes fbIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.q-feedback.show{display:flex;gap:12px;align-items:flex-start}
+.q-feedback.correct{background:rgba(107,203,119,.1);border-color:rgba(107,203,119,.3);color:#c8f0cc}
+.q-feedback.wrong  {background:rgba(201,24,74,.1);border-color:rgba(201,24,74,.3);color:#f0c0cc}
+.q-feedback.partial{background:rgba(233,196,106,.08);border-color:rgba(233,196,106,.28);color:#f0e4b0}
+.q-feedback .fb-icon{font-size:18px;flex-shrink:0;line-height:1.2}
+.q-feedback .fb-body{}
+.q-feedback .fb-verdict{font:700 11px/1 var(--ff-m);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+.q-feedback .fb-verdict.correct{color:#6bcb77}
+.q-feedback .fb-verdict.wrong  {color:#ff6b9d}
+.q-feedback .fb-verdict.partial{color:#e9c46a}
+.q-feedback .fb-text{font-size:12.5px;line-height:1.65;opacity:.9}
+.q-feedback .fb-correcta{
+  margin-top:7px;padding:7px 11px;
+  background:rgba(107,203,119,.1);border-radius:5px;
+  font-size:12px;color:#9de8a0;line-height:1.5;
+}
+.q-feedback .fb-correcta strong{color:#6bcb77}
+
+/* ── Opciones marcadas visualmente ── */
+.radio-row.sel-correct,.check-row.sel-correct{
+  background:rgba(107,203,119,.08)!important;
+  border-color:rgba(107,203,119,.4)!important;
+  color:#c8f0cc;
+}
+.radio-row.sel-wrong,.check-row.sel-wrong{
+  background:rgba(201,24,74,.08)!important;
+  border-color:rgba(201,24,74,.35)!important;
+  color:#f0c0cc;
+}
+.radio-row.is-answer,.check-row.is-answer{
+  background:rgba(107,203,119,.06)!important;
+  border-color:rgba(107,203,119,.25)!important;
+}
 .sub-area{margin-top:34px;text-align:center}
 .btn-sub{background:var(--red);color:#fff;border:none;padding:15px 50px;border-radius:6px;font:700 17px/1 var(--ff-d);cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s}
 .btn-sub:hover{background:#e0224e;transform:translateY(-2px);box-shadow:0 10px 28px rgba(201,24,74,.4)}
@@ -184,6 +226,63 @@ header p{font:400 12px/1 var(--ff-m);letter-spacing:.08em;color:var(--muted);mar
 .f-msg{display:none;padding:18px;border-radius:8px;margin-top:20px;text-align:center;font-size:13.5px;line-height:1.6}
 .f-msg.ok{background:rgba(107,203,119,.1);border:1px solid rgba(107,203,119,.3);color:#6bcb77}
 .f-msg.err{background:rgba(201,24,74,.1);border:1px solid rgba(201,24,74,.3);color:var(--red)}
+
+/* ── CONTADOR DE CARACTERES ── */
+.char-counter{
+  font:400 10.5px/1 var(--ff-m);letter-spacing:.05em;
+  color:var(--muted);text-align:right;margin-top:4px;
+  transition:color .2s;
+}
+.char-counter.ok{color:var(--green)}
+.char-counter.warn{color:var(--gold)}
+.char-counter.bad{color:var(--red)}
+
+/* ── MODAL DE CONFIRMACIÓN ── */
+#modal-confirm{
+  display:none;position:fixed;inset:0;z-index:9998;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+  animation:modalIn .22s cubic-bezier(.16,1,.3,1);
+}
+#modal-confirm.open{display:flex}
+@keyframes modalIn{from{opacity:0}to{opacity:1}}
+.modal-box{
+  background:var(--surf2);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:32px 28px 24px;
+  max-width:460px;width:90%;
+  box-shadow:0 24px 64px rgba(0,0,0,.8);
+  animation:boxIn .28s cubic-bezier(.16,1,.3,1);
+}
+@keyframes boxIn{from{opacity:0;transform:scale(.93) translateY(16px)}to{opacity:1;transform:none}}
+.modal-box .mb-icon{font-size:2rem;text-align:center;margin-bottom:10px}
+.modal-box h3{font:900 1.25rem/1.2 var(--ff-d);text-align:center;margin-bottom:8px}
+.modal-box .mb-sub{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px}
+.modal-resumen{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:12.5px;line-height:1.75}
+.modal-resumen .mr-item{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.modal-resumen .mr-item:last-child{border-bottom:none}
+.modal-resumen .mr-key{color:var(--muted)}
+.modal-resumen .mr-val{color:var(--text);font-weight:600;text-align:right;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-resumen .mr-val.ok-val{color:var(--green)}
+.modal-resumen .mr-val.warn-val{color:var(--gold)}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.modal-btns .btn-cancel{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:11px 22px;border-radius:6px;font:600 13px/1 var(--ff-u);cursor:pointer;
+  transition:all .18s;
+}
+.modal-btns .btn-cancel:hover{border-color:var(--text);color:var(--text)}
+.modal-btns .btn-confirm{
+  background:var(--red);color:#fff;border:none;
+  padding:11px 26px;border-radius:6px;font:700 13px/1 var(--ff-u);cursor:pointer;
+  transition:all .18s;
+}
+.modal-btns .btn-confirm:hover{background:#e0224e;transform:translateY(-1px)}
+.modal-btns .btn-confirm:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ── ESTADO COMPLETITUD DEL FORMULARIO EN FAB ── */
+.fab-print.ready{background:var(--green);color:#0a1a0a}
+.fab-print.incomplete{opacity:.6}
 
 footer{background:#000;border-top:1px solid var(--border);padding:20px;text-align:center;font:400 11.5px/1 var(--ff-m);color:var(--muted);letter-spacing:.12em}
 
@@ -216,6 +315,8 @@ footer{background:#000;border-top:1px solid var(--border);padding:20px;text-alig
 .fab:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.7)}
 .fab:active{transform:translateY(0);box-shadow:0 4px 12px rgba(0,0,0,.5)}
 .fab-print{background:var(--red);color:#fff}
+.fab-csv{background:#0d2d1a;color:var(--green);border:1px solid rgba(107,203,119,.35)}
+.fab-csv:hover{background:#122e1c}
 .fab-install{
   background:#1c1c2e;color:var(--gold);
   border:1px solid rgba(233,196,106,.35);
@@ -243,49 +344,12 @@ footer{background:#000;border-top:1px solid var(--border);padding:20px;text-alig
 }
 .pwa-toast .ct:hover{opacity:1}
 
-/* ══════════════════════════════════════════════════════════════
-   PRINT / PDF   —   @media print
-   • Muestra los 4 paneles completos con sus tablas
-   • Oculta controles interactivos, hotspots y formulario
-   • Mantiene fondo oscuro (print-color-adjust: exact)
-══════════════════════════════════════════════════════════════ */
-@media print{
-  @page{margin:14mm 11mm;size:A4 portrait}
+/* ── INFORME (oculto en pantalla, solo se usa en ventana nueva) ── */
+#informe-respuestas{display:none}
 
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-
-  body{background:#07070f!important;color:#f0f0f8!important}
-
-  /* — Ocultar elementos interactivos — */
-  .type-selector,.layer-controls,.legend,
-  .fab-bar,.pwa-toast,#g-tip,.hs,.hs-info,
-  .sec-div,.form-wrap,footer,
-  button:not(.print-keep){display:none!important}
-
-  /* — Mostrar TODOS los paneles — */
-  .type-panel{display:block!important;page-break-after:always}
-  .type-panel:last-of-type{page-break-after:auto}
-
-  /* — Tablas y constelaciones siempre visibles — */
-  .attr-table-wrap,.const-panel{display:block!important}
-
-  /* — Sin cortes internos — */
-  .attr-table-wrap,.const-panel,.stage{page-break-inside:avoid}
-
-  /* — Stage: sólo capa base (l1) — */
-  .stage-inner img.slayer.l2,
-  .stage-inner img.slayer.l3{display:none!important}
-  .stage{box-shadow:none!important;max-height:260px;overflow:hidden}
-  .stage-inner img.slayer.l1{max-height:260px;width:100%;object-fit:cover}
-
-  /* — Header limpio — */
-  header{padding:18px!important}
-  header::before{display:none!important}
-
-  .container{padding-bottom:16px!important}
 }
-
 </style>
+
 </head>
 <body>
 
@@ -620,56 +684,91 @@ footer{background:#000;border-top:1px solid var(--border);padding:20px;text-alig
     </div>
     <div class="q-block" id="grp-q1">
       <h3><span class="qn">Pregunta 01 · Identificación formal</span>¿Qué combinación de atributos describe mejor la tipografía de "EPIC"?</h3>
-      <label class="radio-row"><input type="radio" name="q1" value="a"> Sans geométrica monolineal, peso regular, caja baja</label>
-      <label class="radio-row"><input type="radio" name="q1" value="b"> Serif moderna (didona), contraste extremo, mayúsculas, espaciado display</label>
-      <label class="radio-row"><input type="radio" name="q1" value="c"> Script caligráfica bold con ligazón y terminales redondeados</label>
-      <label class="radio-row"><input type="radio" name="q1" value="d"> Grotesca condensada black, sin remates, monolineal</label>
+      <label class="radio-row" data-q="q1" data-val="a"><input type="radio" name="q1" value="a"> Sans geométrica monolineal, peso regular, caja baja</label>
+      <label class="radio-row" data-q="q1" data-val="b"><input type="radio" name="q1" value="b"> Serif moderna (didona), contraste extremo, mayúsculas, espaciado display</label>
+      <label class="radio-row" data-q="q1" data-val="c"><input type="radio" name="q1" value="c"> Script caligráfica bold con ligazón y terminales redondeados</label>
+      <label class="radio-row" data-q="q1" data-val="d"><input type="radio" name="q1" value="d"> Grotesca condensada black, sin remates, monolineal</label>
       <span class="q-err">Selecciona una opción</span>
+      <div class="q-feedback" id="fb-q1">
+        <div class="fb-icon"></div>
+        <div class="fb-body">
+          <div class="fb-verdict"></div>
+          <div class="fb-text"></div>
+          <div class="fb-correcta" style="display:none"></div>
+        </div>
+      </div>
     </div>
     <div class="q-block" id="grp-q2">
       <h3><span class="qn">Pregunta 02 · Constelación connotativa</span>La combinación "extra-light + alta altura de x + sans humanista" activa en la constelación de Moles (señala todos los que apliquen):</h3>
-      <label class="check-row"><input type="checkbox" name="q2" value="del-tec"> Delicadeza / tecnología refinada</label>
-      <label class="check-row"><input type="checkbox" name="q2" value="con-ind"> Contundencia / industria</label>
-      <label class="check-row"><input type="checkbox" name="q2" value="esp-cal"> Espontaneidad / calidez afectiva</label>
-      <label class="check-row"><input type="checkbox" name="q2" value="ele-cla"> Elegancia clásica / dramatismo editorial</label>
+      <label class="check-row" data-q="q2" data-val="del-tec"><input type="checkbox" name="q2" value="del-tec"> Delicadeza / tecnología refinada</label>
+      <label class="check-row" data-q="q2" data-val="con-ind"><input type="checkbox" name="q2" value="con-ind"> Contundencia / industria</label>
+      <label class="check-row" data-q="q2" data-val="esp-cal"><input type="checkbox" name="q2" value="esp-cal"> Espontaneidad / calidez afectiva</label>
+      <label class="check-row" data-q="q2" data-val="ele-cla"><input type="checkbox" name="q2" value="ele-cla"> Elegancia clásica / dramatismo editorial</label>
+      <div class="q-feedback" id="fb-q2">
+        <div class="fb-icon"></div>
+        <div class="fb-body">
+          <div class="fb-verdict"></div>
+          <div class="fb-text"></div>
+          <div class="fb-correcta" style="display:none"></div>
+        </div>
+      </div>
     </div>
     <div class="q-block" id="grp-q3">
       <h3><span class="qn">Pregunta 03 · Atributo formal y connotación</span>En "START", ¿qué conjunto de atributos genera la connotación de urgencia y acción inmediata?</h3>
-      <label class="radio-row"><input type="radio" name="q3" value="a"> Serif filiforme + contraste extremo didona + caja baja</label>
-      <label class="radio-row"><input type="radio" name="q3" value="b"> Ligazón script + modulación orgánica + terminales redondeados</label>
-      <label class="radio-row"><input type="radio" name="q3" value="c"> Peso black + condensada + terminales angulares + all caps</label>
-      <label class="radio-row"><input type="radio" name="q3" value="d"> Espaciado aireado + modulación oblicua + peso regular</label>
+      <label class="radio-row" data-q="q3" data-val="a"><input type="radio" name="q3" value="a"> Serif filiforme + contraste extremo didona + caja baja</label>
+      <label class="radio-row" data-q="q3" data-val="b"><input type="radio" name="q3" value="b"> Ligazón script + modulación orgánica + terminales redondeados</label>
+      <label class="radio-row" data-q="q3" data-val="c"><input type="radio" name="q3" value="c"> Peso black + condensada + terminales angulares + all caps</label>
+      <label class="radio-row" data-q="q3" data-val="d"><input type="radio" name="q3" value="d"> Espaciado aireado + modulación oblicua + peso regular</label>
       <span class="q-err">Selecciona una opción</span>
+      <div class="q-feedback" id="fb-q3">
+        <div class="fb-icon"></div>
+        <div class="fb-body">
+          <div class="fb-verdict"></div>
+          <div class="fb-text"></div>
+          <div class="fb-correcta" style="display:none"></div>
+        </div>
+      </div>
     </div>
     <div class="q-block" id="grp-q4">
       <h3><span class="qn">Pregunta 04 · Retícula y constelación en página</span>¿Cómo altera la jerarquía cambiar el nodo dominante de "black display" a "light cuerpo"?</h3>
-      <label class="radio-row"><input type="radio" name="q4" value="a"> Aumenta el peso del nodo y refuerza la autoridad institucional</label>
-      <label class="radio-row"><input type="radio" name="q4" value="b"> Reduce el peso del nodo, crea mayor silencio visual y desplaza la jerarquía hacia otros elementos</label>
-      <label class="radio-row"><input type="radio" name="q4" value="c"> No altera la constelación; posición en retícula es independiente del peso tipográfico</label>
-      <label class="radio-row"><input type="radio" name="q4" value="d"> Elimina el contraste y produce composición monolineal en toda la página</label>
+      <label class="radio-row" data-q="q4" data-val="a"><input type="radio" name="q4" value="a"> Aumenta el peso del nodo y refuerza la autoridad institucional</label>
+      <label class="radio-row" data-q="q4" data-val="b"><input type="radio" name="q4" value="b"> Reduce el peso del nodo, crea mayor silencio visual y desplaza la jerarquía hacia otros elementos</label>
+      <label class="radio-row" data-q="q4" data-val="c"><input type="radio" name="q4" value="c"> No altera la constelación; posición en retícula es independiente del peso tipográfico</label>
+      <label class="radio-row" data-q="q4" data-val="d"><input type="radio" name="q4" value="d"> Elimina el contraste y produce composición monolineal en toda la página</label>
       <span class="q-err">Selecciona una opción</span>
+      <div class="q-feedback" id="fb-q4">
+        <div class="fb-icon"></div>
+        <div class="fb-body">
+          <div class="fb-verdict"></div>
+          <div class="fb-text"></div>
+          <div class="fb-correcta" style="display:none"></div>
+        </div>
+      </div>
     </div>
     <div class="q-block">
       <h3><span class="qn">Pregunta 05 · Análisis abierto</span>Elige UNA tipografía. Explica una decisión tipográfica identificando el atributo formal y el valor psicológico que activa según la constelación de Moles.</h3>
       <div class="f-group" id="grp-q5">
-        <label for="f-q5">Tu análisis (mínimo 3 oraciones) *</label>
+        <label for="f-q5">Tu análisis (mínimo 300 caracteres) *</label>
         <textarea id="f-q5" name="q5" required placeholder="Ej: En RUBY, el contraste extremo didona (atributo formal) activa los valores de elegancia fría y sofisticación (valor psicológico), porque las astas negras en oposición a los hairlines generan una tensión retiniana asociada al mundo de la moda de alto diseño..."></textarea>
+        <div class="char-counter" id="cc-q5">0 / 300 caracteres mínimos</div>
         <span class="f-err">Campo obligatorio</span>
       </div>
     </div>
     <div class="q-block">
       <h3><span class="qn">Pregunta 06 · Retícula y tono de voz</span>Describe cómo la constelación de moles en la página (retícula) refuerza o contradice el tono de voz tipográfico en uno de los ejemplos.</h3>
       <div class="f-group" id="grp-q6">
-        <label for="f-q6">Tu descripción *</label>
+        <label for="f-q6">Tu descripción (mínimo 300 caracteres) *</label>
         <textarea id="f-q6" name="q6" required placeholder="Ej: En GIFT, el lettering script centrado ocupa el nodo dominante de la retícula. Su masa visual y trazo bold concentran la atención en el centro de la composición, reforzando..."></textarea>
+        <div class="char-counter" id="cc-q6">0 / 300 caracteres mínimos</div>
         <span class="f-err">Campo obligatorio</span>
       </div>
     </div>
     <div class="q-block">
       <h3><span class="qn">Pregunta 07 · Propuesta creativa</span>Propón una modificación de atributo en uno de los ejemplos y justifica su impacto semántico según Moles.</h3>
       <div class="f-group" id="grp-q7">
-        <label for="f-q7">Tu propuesta y justificación *</label>
+        <label for="f-q7">Tu propuesta y justificación (mínimo 300 caracteres) *</label>
         <textarea id="f-q7" name="q7" required placeholder="Ej: Si cambiara START de condensada a extendida, el atributo de proporción cambiaría su vector connotativo de urgencia/velocidad hacia..."></textarea>
+        <div class="char-counter" id="cc-q7">0 / 300 caracteres mínimos</div>
         <span class="f-err">Campo obligatorio</span>
       </div>
     </div>
@@ -682,6 +781,22 @@ footer{background:#000;border-top:1px solid var(--border);padding:20px;text-alig
 </div>
 
 </div><!-- /container -->
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL DE CONFIRMACIÓN DE ENVÍO
+══════════════════════════════════════════════════════════════ -->
+<div id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box">
+    <div class="mb-icon">📋</div>
+    <h3 id="modal-title">Confirmar envío</h3>
+    <p class="mb-sub">Revisa tu información antes de enviar. Una vez enviada, no podrás modificarla.</p>
+    <div class="modal-resumen" id="modal-resumen"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="modal-cancel">Volver y revisar</button>
+      <button class="btn-confirm" id="modal-confirm-btn">Sí, enviar evaluación</button>
+    </div>
+  </div>
+</div>
 
 <footer>Docente: Mg Mario Quiroz &nbsp;·&nbsp; Curso: Tipografía &nbsp;·&nbsp; 2026 &nbsp;·&nbsp; Semana 3</footer>
 
@@ -800,42 +915,402 @@ document.querySelectorAll('.type-btn').forEach(btn => {
   });
 });
 
-/* ── 5. FORM ────────────────────────────────────────────────── */
-function chkText(id,gid){const e=document.getElementById(id),g=document.getElementById(gid);const ok=e&&e.value.trim().length>0;g&&g.classList.toggle('bad',!ok);return ok}
-function chkEmail(id,gid){const e=document.getElementById(id),g=document.getElementById(gid);const ok=e&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim());g&&g.classList.toggle('bad',!ok);return ok}
-function chkRadio(name,bid){const b=document.getElementById(bid);const ok=!!document.querySelector(`input[name="${name}"]:checked`);if(b){b.classList.toggle('bad',!ok);const e=b.querySelector('.q-err');if(e)e.style.display=ok?'none':'block'}return ok}
+/* ── RETROALIMENTACIÓN EN TIEMPO REAL ─────────────────────────
+   Se activa al cambiar radio/checkbox antes del envío.
+   Textos pedagógicos por pregunta y por opción.
+───────────────────────────────────────────────────────────── */
+const FB_DATA = {
+  q1: {
+    correcta: 'b',
+    feedbacks: {
+      a: {
+        veredicto: 'Incorrecto',
+        texto: 'Una sans geométrica monolineal (como Futura) transmite modernidad y frialdad técnica. EPIC, en cambio, combina serif con modulación vertical y contraste extremo: rasgos propios de una romana moderna o didona, no de una grotesca geométrica.',
+        mostrarCorrecta: true
+      },
+      b: {
+        veredicto: '¡Correcto!',
+        texto: 'Exacto. EPIC exhibe los atributos definitorios de una serif moderna (romana didona): contraste altísimo entre astas gruesas y filetes delgados, remates horizontales finos, modulación vertical y composición en mayúsculas con espaciado display. Estos rasgos activan connotaciones de elegancia, sofisticación y autoridad editorial.',
+        mostrarCorrecta: false
+      },
+      c: {
+        veredicto: 'Incorrecto',
+        texto: 'Una script caligráfica (como Gift) posee ligazón entre caracteres, terminales redondeados y modulación orgánica que evoca el gesto de la mano. EPIC no tiene ninguno de esos rasgos: sus remates son filiformes y su estructura es completamente racional.',
+        mostrarCorrecta: true
+      },
+      d: {
+        veredicto: 'Incorrecto',
+        texto: 'La grotesca condensada black (como START) tiene bajo contraste, sin remates y proporciones estrechas. EPIC, al contrario, presenta contraste extremo, remates finos y proporciones amplias. Son tipologías con connotaciones opuestas dentro de la constelación de Moles.',
+        mostrarCorrecta: true
+      }
+    },
+    textoCorrecta: 'b) Serif moderna (didona), contraste extremo, mayúsculas, espaciado display'
+  },
+  q2: {
+    correctas: ['del-tec'],
+    feedbackParcial: 'Casi. La opción correcta es solo "Delicadeza / tecnología refinada". El bajo peso (extra-light) genera ligereza y sutileza; la alta altura de x aporta legibilidad funcional; y el trazado humanista introduce calidez orgánica. Juntos, estos tres nodos activan la constelación de lo refinado y tecnológico, no la energía o el dramatismo.',
+    feedbackCorrecto: '¡Correcto! La combinación extra-light + alta x-height + humanista produce una constelación de delicadeza y tecnología refinada. El trazo ligero crea silencio visual, la gran altura de x garantiza legibilidad funcional y la modulación humanista añade calidez. Moles denomina esto un "vector connotativo de precisión suave".',
+    feedbackVacio: 'Selecciona al menos una opción para ver la retroalimentación.',
+    textoCorrecta: 'Delicadeza / tecnología refinada'
+  },
+  q3: {
+    correcta: 'c',
+    feedbacks: {
+      a: {
+        veredicto: 'Incorrecto',
+        texto: 'Los serifs filiformes y el contraste didona generan elegancia fría y dramatismo editorial (como en RUBY o EPIC), no urgencia ni acción. La caja baja además reduce la energía imperativa. Esta constelación se asocia más al lujo y la distinción que al dinamismo.',
+        mostrarCorrecta: true
+      },
+      b: {
+        veredicto: 'Incorrecto',
+        texto: 'La ligazón script y la modulación orgánica evocan movimiento personal y calidez afectiva (como en GIFT), pero no urgencia mecánica. Los terminales redondeados añaden accesibilidad, no presión. Esta configuración activa vectores de espontaneidad, no de comando.',
+        mostrarCorrecta: true
+      },
+      c: {
+        veredicto: '¡Correcto!',
+        texto: 'Exacto. En START, el peso black acumula masa visual y presión; la proporción condensada comprime las formas generando impulso ascendente y velocidad; los terminales angulares cortan el reposo del ojo; y las mayúsculas añaden imperatividad. Según Moles, esta constelación activa urgencia, acción y comando de forma directa.',
+        mostrarCorrecta: false
+      },
+      d: {
+        veredicto: 'Incorrecto',
+        texto: 'El espaciado aireado y la modulación oblicua generan respiración visual y dinamismo elegante, pero no urgencia. El peso regular reduce la presión visual. Esta configuración activa vectores de apertura y fluidez, opuestos a la contundencia que caracteriza a START.',
+        mostrarCorrecta: true
+      }
+    },
+    textoCorrecta: 'c) Peso black + condensada + terminales angulares + all caps'
+  },
+  q4: {
+    correcta: 'b',
+    feedbacks: {
+      a: {
+        veredicto: 'Incorrecto',
+        texto: 'Si el nodo dominante cambia de black a light, el peso visual del nodo disminuye, no aumenta. La autoridad institucional en la constelación de Moles depende del peso y la presencia del nodo dominante; reducirlo debilita esa connotación.',
+        mostrarCorrecta: true
+      },
+      b: {
+        veredicto: '¡Correcto!',
+        texto: 'Exacto. En la retícula tipográfica, el nodo dominante concentra la jerarquía visual. Al sustituir "black display" por "light cuerpo", el peso del nodo cae drásticamente: el ojo deja de ser dirigido por ese punto focal y la jerarquía se dispersa o se desplaza hacia otros elementos compositivos. Moles lo describe como un cambio de "vector de autoridad" a "vector de silencio".',
+        mostrarCorrecta: false
+      },
+      c: {
+        veredicto: 'Incorrecto',
+        texto: 'El peso tipográfico es uno de los atributos formales que más directamente incide en la constelación de Moles y en la jerarquía de la retícula. La posición en la retícula y el peso tipográfico actúan juntos: cambiar uno inevitablemente altera la lectura del otro.',
+        mostrarCorrecta: true
+      },
+      d: {
+        veredicto: 'Incorrecto',
+        texto: 'Pasar de black a light no elimina el contraste de toda la página, solo modifica el nodo dominante. Los demás elementos conservan sus pesos relativos. El resultado no es una composición monolineal, sino una rejerarquización en la que otros elementos ganan protagonismo.',
+        mostrarCorrecta: true
+      }
+    },
+    textoCorrecta: 'b) Reduce el peso del nodo, crea mayor silencio visual y desplaza la jerarquía hacia otros elementos'
+  }
+};
 
-['f-nombre','f-email','f-q5','f-q6','f-q7'].forEach(id=>{
-  const el=document.getElementById(id);if(!el)return;
-  el.addEventListener('blur',()=>{if(id==='f-email')chkEmail(id,'grp-email');else chkText(id,'grp-'+id.replace('f-',''))});
+function limpiarOpcionesVisuales(qName) {
+  document.querySelectorAll(`[data-q="${qName}"]`).forEach(lbl => {
+    lbl.classList.remove('sel-correct','sel-wrong','is-answer');
+  });
+}
+
+function mostrarFeedback(qKey, selectedVals) {
+  const fb  = document.getElementById('fb-' + qKey);
+  if (!fb) return;
+  const cfg = FB_DATA[qKey];
+
+  const icon    = fb.querySelector('.fb-icon');
+  const verdict = fb.querySelector('.fb-verdict');
+  const text    = fb.querySelector('.fb-text');
+  const correctaBox = fb.querySelector('.fb-correcta');
+
+  fb.className = 'q-feedback';
+  limpiarOpcionesVisuales(qKey);
+
+  // ── Checkbox (q2) ──
+  if (qKey === 'q2') {
+    const correctas = cfg.correctas;
+    const esCorr = selectedVals.length === correctas.length &&
+                   correctas.every(v => selectedVals.includes(v));
+    const hayAlgo = selectedVals.length > 0;
+
+    // Colorear opciones
+    document.querySelectorAll('[data-q="q2"]').forEach(lbl => {
+      const v = lbl.dataset.val;
+      const seleccionada = selectedVals.includes(v);
+      const esCorrecta   = correctas.includes(v);
+      if (seleccionada && esCorrecta)  lbl.classList.add('sel-correct');
+      else if (seleccionada && !esCorrecta) lbl.classList.add('sel-wrong');
+      else if (!seleccionada && esCorrecta) lbl.classList.add('is-answer');
+    });
+
+    if (!hayAlgo) { fb.classList.remove('show'); return; }
+
+    if (esCorr) {
+      icon.textContent = '✓';
+      verdict.textContent = '¡Correcto!';
+      verdict.className = 'fb-verdict correct';
+      text.textContent = cfg.feedbackCorrecto;
+      correctaBox.style.display = 'none';
+      fb.classList.add('show','correct');
+    } else {
+      icon.textContent = '✗';
+      verdict.textContent = 'Incorrecto';
+      verdict.className = 'fb-verdict wrong';
+      text.textContent = cfg.feedbackParcial;
+      correctaBox.innerHTML = '<strong>Respuesta correcta:</strong> ' + cfg.textoCorrecta;
+      correctaBox.style.display = 'block';
+      fb.classList.add('show','wrong');
+    }
+    return;
+  }
+
+  // ── Radio (q1, q3, q4) ──
+  const sel = selectedVals[0];
+  if (!sel) { fb.classList.remove('show'); return; }
+  const fd  = cfg.feedbacks[sel];
+  const esCorr = sel === cfg.correcta;
+
+  // Colorear opciones
+  document.querySelectorAll(`[data-q="${qKey}"]`).forEach(lbl => {
+    const v = lbl.dataset.val;
+    if (v === sel)        lbl.classList.add(esCorr ? 'sel-correct' : 'sel-wrong');
+    if (!esCorr && v === cfg.correcta) lbl.classList.add('is-answer');
+  });
+
+  icon.textContent = esCorr ? '✓' : '✗';
+  verdict.textContent = fd.veredicto;
+  verdict.className = 'fb-verdict ' + (esCorr ? 'correct' : 'wrong');
+  text.textContent = fd.texto;
+
+  if (fd.mostrarCorrecta) {
+    correctaBox.innerHTML = '<strong>Respuesta correcta:</strong> ' + cfg.textoCorrecta;
+    correctaBox.style.display = 'block';
+  } else {
+    correctaBox.style.display = 'none';
+  }
+
+  fb.classList.add('show', esCorr ? 'correct' : 'wrong');
+}
+
+// Listeners para radios
+['q1','q3','q4'].forEach(qKey => {
+  document.querySelectorAll(`input[name="${qKey}"]`).forEach(inp => {
+    inp.addEventListener('change', () => {
+      const sel = document.querySelector(`input[name="${qKey}"]:checked`)?.value;
+      mostrarFeedback(qKey, sel ? [sel] : []);
+    });
+  });
 });
 
-document.getElementById('quiz').addEventListener('submit',async e=>{
+// Listener para checkboxes q2
+document.querySelectorAll('input[name="q2"]').forEach(inp => {
+  inp.addEventListener('change', () => {
+    const sel = [...document.querySelectorAll('input[name="q2"]:checked')].map(c => c.value);
+    mostrarFeedback('q2', sel);
+  });
+});
+
+/* ── 5. FORM ────────────────────────────────────────────────── */
+const MIN_CHARS = 300;
+
+function chkText(id, gid) {
+  const e = document.getElementById(id), g = document.getElementById(gid);
+  const ok = e && e.value.trim().length > 0;
+  g && g.classList.toggle('bad', !ok);
+  return ok;
+}
+function chkTextMin(id, gid) {
+  const e = document.getElementById(id), g = document.getElementById(gid);
+  const ok = e && e.value.trim().length >= MIN_CHARS;
+  g && g.classList.toggle('bad', !ok);
+  if (g) {
+    let err = g.querySelector('.f-err');
+    if (err) err.textContent = ok ? '' : `Mínimo ${MIN_CHARS} caracteres (tienes ${e.value.trim().length})`;
+  }
+  return ok;
+}
+function chkEmail(id, gid) {
+  const e = document.getElementById(id), g = document.getElementById(gid);
+  const ok = e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.value.trim());
+  g && g.classList.toggle('bad', !ok);
+  return ok;
+}
+function chkRadio(name, bid) {
+  const b = document.getElementById(bid);
+  const ok = !!document.querySelector(`input[name="${name}"]:checked`);
+  if (b) {
+    b.classList.toggle('bad', !ok);
+    const err = b.querySelector('.q-err');
+    if (err) err.style.display = ok ? 'none' : 'block';
+  }
+  return ok;
+}
+
+/* ── Contadores de caracteres ── */
+function setupCounter(id, ccId) {
+  const ta = document.getElementById(id);
+  const cc = document.getElementById(ccId);
+  if (!ta || !cc) return;
+  function update() {
+    const n = ta.value.trim().length;
+    const resto = MIN_CHARS - n;
+    if (n >= MIN_CHARS) {
+      cc.textContent = n + ' caracteres ✓';
+      cc.className = 'char-counter ok';
+    } else if (n >= MIN_CHARS * 0.6) {
+      cc.textContent = n + ' / ' + MIN_CHARS + ' — faltan ' + resto + ' caracteres';
+      cc.className = 'char-counter warn';
+    } else {
+      cc.textContent = n + ' / ' + MIN_CHARS + ' caracteres mínimos';
+      cc.className = 'char-counter bad';
+    }
+  }
+  ta.addEventListener('input', update);
+  ta.addEventListener('blur', () => { update(); chkTextMin(id, 'grp-' + id.replace('f-','')); });
+  update();
+}
+setupCounter('f-q5','cc-q5');
+setupCounter('f-q6','cc-q6');
+setupCounter('f-q7','cc-q7');
+
+/* ── Validación blur para otros campos ── */
+['f-nombre','f-email'].forEach(id => {
+  const el = document.getElementById(id); if (!el) return;
+  el.addEventListener('blur', () => {
+    if (id === 'f-email') chkEmail(id, 'grp-email');
+    else chkText(id, 'grp-nombre');
+  });
+});
+
+/* ── Verificar completitud para botón PDF ── */
+function checkFormComplete() {
+  const nombre = document.getElementById('f-nombre')?.value.trim().length > 0;
+  const email  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('f-email')?.value.trim() || '');
+  const q1ok   = !!document.querySelector('input[name="q1"]:checked');
+  const q3ok   = !!document.querySelector('input[name="q3"]:checked');
+  const q4ok   = !!document.querySelector('input[name="q4"]:checked');
+  const q5ok   = (document.getElementById('f-q5')?.value.trim().length || 0) >= MIN_CHARS;
+  const q6ok   = (document.getElementById('f-q6')?.value.trim().length || 0) >= MIN_CHARS;
+  const q7ok   = (document.getElementById('f-q7')?.value.trim().length || 0) >= MIN_CHARS;
+  return nombre && email && q1ok && q3ok && q4ok && q5ok && q6ok && q7ok;
+}
+
+function updatePdfBtn() {
+  const btn = document.getElementById('btn-print');
+  if (!btn) return;
+  const listo = checkFormComplete();
+  btn.classList.toggle('ready', listo);
+  btn.title = listo
+    ? 'Generar informe PDF — formulario completo'
+    : 'Completa todas las respuestas para generar el PDF';
+}
+
+// Observar cambios en el formulario para actualizar botón PDF
+document.getElementById('quiz').addEventListener('input', updatePdfBtn);
+document.getElementById('quiz').addEventListener('change', updatePdfBtn);
+updatePdfBtn();
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL DE CONFIRMACIÓN
+══════════════════════════════════════════════════════════════ */
+const modalEl   = document.getElementById('modal-confirm');
+const modalCancelBtn = document.getElementById('modal-cancel');
+const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+const modalResumen = document.getElementById('modal-resumen');
+
+function abrirModal() {
+  // Rellenar resumen
+  const nombre = document.getElementById('f-nombre')?.value.trim() || '—';
+  const email  = document.getElementById('f-email')?.value.trim() || '—';
+  const tipo   = document.getElementById('f-type')?.value || 'EPIC';
+  const q1sel  = document.querySelector('input[name="q1"]:checked')?.value?.toUpperCase() || '—';
+  const q3sel  = document.querySelector('input[name="q3"]:checked')?.value?.toUpperCase() || '—';
+  const q4sel  = document.querySelector('input[name="q4"]:checked')?.value?.toUpperCase() || '—';
+  const q2sel  = [...document.querySelectorAll('input[name="q2"]:checked')].map(c => c.value).join(', ') || '—';
+  const q5len  = document.getElementById('f-q5')?.value.trim().length || 0;
+  const q6len  = document.getElementById('f-q6')?.value.trim().length || 0;
+  const q7len  = document.getElementById('f-q7')?.value.trim().length || 0;
+
+  function row(key, val, estado) {
+    const cls = estado === 'ok' ? 'ok-val' : estado === 'warn' ? 'warn-val' : '';
+    return `<div class="mr-item"><span class="mr-key">${key}</span><span class="mr-val ${cls}">${val}</span></div>`;
+  }
+
+  modalResumen.innerHTML =
+    row('Nombre', nombre, 'ok') +
+    row('Correo', email, 'ok') +
+    row('Tipografía analizada', tipo, 'ok') +
+    row('P01 – Identificación', 'Opción ' + q1sel, q1sel !== '—' ? 'ok' : 'warn') +
+    row('P02 – Constelación', q2sel !== '—' ? 'Seleccionada(s)' : '—', q2sel !== '—' ? 'ok' : 'warn') +
+    row('P03 – Atributo formal', 'Opción ' + q3sel, q3sel !== '—' ? 'ok' : 'warn') +
+    row('P04 – Retícula', 'Opción ' + q4sel, q4sel !== '—' ? 'ok' : 'warn') +
+    row('P05 – Análisis abierto', q5len + ' caracteres', q5len >= MIN_CHARS ? 'ok' : 'warn') +
+    row('P06 – Retícula y tono', q6len + ' caracteres', q6len >= MIN_CHARS ? 'ok' : 'warn') +
+    row('P07 – Propuesta creativa', q7len + ' caracteres', q7len >= MIN_CHARS ? 'ok' : 'warn');
+
+  modalEl.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  modalConfirmBtn.disabled = false;
+  modalConfirmBtn.textContent = 'Sí, enviar evaluación';
+}
+
+function cerrarModal() {
+  modalEl.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+modalCancelBtn.addEventListener('click', cerrarModal);
+modalEl.addEventListener('click', e => { if (e.target === modalEl) cerrarModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+/* ── Submit con modal ── */
+document.getElementById('quiz').addEventListener('submit', async e => {
   e.preventDefault();
-  let ok=true;
-  ok=chkText('f-nombre','grp-nombre')&&ok;
-  ok=chkEmail('f-email','grp-email')&&ok;
-  ok=chkRadio('q1','grp-q1')&&ok;
-  ok=chkRadio('q3','grp-q3')&&ok;
-  ok=chkRadio('q4','grp-q4')&&ok;
-  ok=chkText('f-q5','grp-q5')&&ok;
-  ok=chkText('f-q6','grp-q6')&&ok;
-  ok=chkText('f-q7','grp-q7')&&ok;
-  if(!ok){const first=document.querySelector('.f-group.bad,.q-block.bad');if(first)first.scrollIntoView({behavior:'smooth',block:'center'});return}
+  let ok = true;
+  ok = chkText('f-nombre','grp-nombre') && ok;
+  ok = chkEmail('f-email','grp-email') && ok;
+  ok = chkRadio('q1','grp-q1') && ok;
+  ok = chkRadio('q3','grp-q3') && ok;
+  ok = chkRadio('q4','grp-q4') && ok;
+  ok = chkTextMin('f-q5','grp-q5') && ok;
+  ok = chkTextMin('f-q6','grp-q6') && ok;
+  ok = chkTextMin('f-q7','grp-q7') && ok;
+  if (!ok) {
+    const first = document.querySelector('.f-group.bad,.q-block.bad');
+    if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  abrirModal();
+});
 
-  const btn=document.getElementById('btn-sub');
-  const msgOk=document.getElementById('msg-ok');
-  const msgErr=document.getElementById('msg-err');
-  document.getElementById('f-cc').value=document.getElementById('f-email').value.trim();
-  btn.disabled=true;btn.textContent='Enviando…';msgErr.style.display='none';
+/* ── Envío real tras confirmación ── */
+modalConfirmBtn.addEventListener('click', async () => {
+  modalConfirmBtn.disabled = true;
+  modalConfirmBtn.textContent = 'Enviando…';
 
-  try{
-    const fd=new FormData(e.target);
-    const res=await fetch('https://formsubmit.co/ajax/c12139@utp.edu.pe',{method:'POST',body:fd,headers:{Accept:'application/json'}});
-    const data=await res.json().catch(()=>({}));
-    if(data.success==='true'||data.success===true||res.ok){e.target.style.display='none';msgOk.style.display='block'}
-    else throw new Error();
-  }catch(_){btn.disabled=false;btn.textContent='Enviar evaluación';msgErr.style.display='block';setTimeout(()=>msgErr.style.display='none',7000)}
+  const btn    = document.getElementById('btn-sub');
+  const msgOk  = document.getElementById('msg-ok');
+  const msgErr = document.getElementById('msg-err');
+  document.getElementById('f-cc').value = document.getElementById('f-email').value.trim();
+
+  try {
+    const fd  = new FormData(document.getElementById('quiz'));
+    const res = await fetch('https://formsubmit.co/ajax/c12139@utp.edu.pe', {
+      method:'POST', body:fd, headers:{Accept:'application/json'}
+    });
+    const data = await res.json().catch(() => ({}));
+    cerrarModal();
+    if (data.success === 'true' || data.success === true || res.ok) {
+      document.getElementById('quiz').style.display = 'none';
+      msgOk.style.display = 'block';
+      updatePdfBtn();
+    } else throw new Error();
+  } catch(_) {
+    cerrarModal();
+    if (btn) { btn.disabled = false; btn.textContent = 'Enviar evaluación'; }
+    msgErr.style.display = 'block';
+    setTimeout(() => msgErr.style.display = 'none', 7000);
+  }
 });
 
 
@@ -843,12 +1318,50 @@ document.getElementById('quiz').addEventListener('submit',async e=>{
    PWA — Service Worker  +  Install Prompt
 ══════════════════════════════════════════════════════════════ */
 
-// — Registrar Service Worker —
+// — Service Worker inline (no depende de sw.js externo) —
 if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE = 'cons-tipografica-v2';
+const ASSETS = ['./', './index.html'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(
+    keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+  )).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const fetchProm = fetch(e.request).then(res => {
+        if (res && res.status === 200 && res.type !== 'opaque') {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => null);
+      return cached || fetchProm;
+    })
+  );
+});
+`;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('[SW] Registrado ✓', reg.scope))
-      .catch(err => console.warn('[SW] No se pudo registrar:', err));
+    navigator.serviceWorker.register(swUrl)
+      .then(reg => {
+        console.log('[SW] Registrado ✓', reg.scope);
+        // Intentar también el sw.js externo si existe
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      })
+      .catch(err => {
+        // Fallback: intentar sw.js externo
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('[SW] Externo registrado ✓'))
+          .catch(e2 => console.warn('[SW] No se pudo registrar:', e2));
+      });
   });
 }
 
@@ -903,9 +1416,23 @@ window.addEventListener('appinstalled', () => {
     Instalar app
   </button>
 
+  <!-- Botón Exportar CSV -->
+  <button class="fab fab-csv" id="btn-csv"
+          aria-label="Exportar respuestas a CSV">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
+         viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="8" y1="13" x2="16" y2="13"/>
+      <line x1="8" y1="17" x2="16" y2="17"/>
+      <polyline points="10 9 9 9 8 9"/>
+    </svg>
+    Exportar CSV
+  </button>
+
   <!-- Botón Guardar PDF / Imprimir -->
   <button class="fab fab-print" id="btn-print"
-          onclick="window.print()" aria-label="Guardar como PDF o imprimir">
+          aria-label="Guardar informe PDF con respuestas">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"
          viewBox="0 0 24 24" aria-hidden="true">
       <polyline points="6 9 6 2 18 2 18 9"/>
@@ -923,6 +1450,306 @@ window.addEventListener('appinstalled', () => {
   <strong>📲 Instalar como App</strong>
   Funciona sin internet e instálala en tu dispositivo como app nativa.
 </div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     INFORME DE RESPUESTAS — visible solo al imprimir PDF
+══════════════════════════════════════════════════════════════ -->
+<div id="informe-respuestas" aria-hidden="true"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   DATOS: CORRECTAS, DATOS FORM, PUNTAJE
+══════════════════════════════════════════════════════════════ */
+var CORRECTAS = {
+  q1: { correcta: 'b', textos: {
+    a: 'Sans geométrica monolineal, peso regular, caja baja',
+    b: 'Serif moderna (didona), contraste extremo, mayúsculas, espaciado display',
+    c: 'Script caligráfica bold con ligazón y terminales redondeados',
+    d: 'Grotesca condensada black, sin remates, monolineal'
+  }},
+  q3: { correcta: 'c', textos: {
+    a: 'Serif filiforme + contraste extremo didona + caja baja',
+    b: 'Ligazón script + modulación orgánica + terminales redondeados',
+    c: 'Peso black + condensada + terminales angulares + all caps',
+    d: 'Espaciado aireado + modulación oblicua + peso regular'
+  }},
+  q4: { correcta: 'b', textos: {
+    a: 'Aumenta el peso del nodo y refuerza la autoridad institucional',
+    b: 'Reduce el peso del nodo, crea mayor silencio visual y desplaza la jerarquía hacia otros elementos',
+    c: 'No altera la constelación; posición en retícula es independiente del peso tipográfico',
+    d: 'Elimina el contraste y produce composición monolineal en toda la página'
+  }}
+};
+var Q2_CORRECTAS = ['del-tec'];
+var Q2_OPTS = {
+  'del-tec': 'Delicadeza / tecnología refinada',
+  'con-ind': 'Contundencia / industria',
+  'esp-cal': 'Espontaneidad / calidez afectiva',
+  'ele-cla': 'Elegancia clásica / dramatismo editorial'
+};
+
+function getFormData() {
+  return {
+    nombre: (document.getElementById('f-nombre') || {}).value ? document.getElementById('f-nombre').value.trim() : '',
+    email:  (document.getElementById('f-email')  || {}).value ? document.getElementById('f-email').value.trim()  : '',
+    tipo:   (document.getElementById('f-type')   || {}).value || 'EPIC',
+    q1:     document.querySelector('input[name="q1"]:checked') ? document.querySelector('input[name="q1"]:checked').value : null,
+    q2:     Array.from(document.querySelectorAll('input[name="q2"]:checked')).map(function(c){return c.value;}),
+    q3:     document.querySelector('input[name="q3"]:checked') ? document.querySelector('input[name="q3"]:checked').value : null,
+    q4:     document.querySelector('input[name="q4"]:checked') ? document.querySelector('input[name="q4"]:checked').value : null,
+    q5:     (document.getElementById('f-q5') || {}).value ? document.getElementById('f-q5').value.trim() : '',
+    q6:     (document.getElementById('f-q6') || {}).value ? document.getElementById('f-q6').value.trim() : '',
+    q7:     (document.getElementById('f-q7') || {}).value ? document.getElementById('f-q7').value.trim() : ''
+  };
+}
+
+function calcPuntaje(data) {
+  var pts = 0, total = 5;
+  if (data.q1 === CORRECTAS.q1.correcta) pts++;
+  var q2ok = data.q2.length === Q2_CORRECTAS.length && Q2_CORRECTAS.every(function(v){return data.q2.indexOf(v)>=0;});
+  if (q2ok) pts++;
+  if (data.q3 === CORRECTAS.q3.correcta) pts++;
+  if (data.q4 === CORRECTAS.q4.correcta) pts++;
+  var abiertas = [data.q5, data.q6, data.q7].filter(function(v){return v && v.length>20;}).length;
+  return { pts: pts, total: total, abiertas: abiertas, nota: Math.round((pts/total)*20) };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   GENERADOR DE INFORME PDF (ventana nueva)
+══════════════════════════════════════════════════════════════ */
+function qBlock(num, tipo, enunciado, respHTML, correctaHTML, cls) {
+  return '<div class="qb ' + cls + '">' +
+    '<div class="qn">Pregunta ' + num + ' \u00b7 ' + tipo + '</div>' +
+    '<div class="qt">' + enunciado + '</div>' +
+    '<div class="qr"><div class="rl">Respuesta del estudiante</div>' +
+    '<div class="rv">' + respHTML + '</div></div>' +
+    (correctaHTML ? '<div class="qc">' + correctaHTML + '</div>' : '') +
+    '</div>';
+}
+
+function buildInforme(data, score, fecha, hora) {
+  var estadoColor = score.pts >= 4 ? '#6bcb77' : score.pts >= 2 ? '#e9c46a' : '#c9184a';
+  var estadoLabel = score.pts >= 4 ? 'Aprobado' : score.pts >= 2 ? 'En proceso' : 'Por reforzar';
+  var notaColor   = score.nota >= 14 ? '#6bcb77' : '#c9184a';
+  var notaLabel   = score.nota >= 14 ? 'Aprobado' : 'Desaprobado';
+
+  // Preguntas objetivas
+  function objBlock(qKey, num, tipo, enunciado) {
+    var sel = data[qKey];
+    var cfg = CORRECTAS[qKey];
+    var esCorr = sel && sel === cfg.correcta;
+    var cls = !sel ? 'op' : esCorr ? 'co' : 'wr';
+    var icon = !sel ? '' : (esCorr ? '\u2713 ' : '\u2717 ');
+    var color = !sel ? '' : (esCorr ? 'color:#6bcb77' : 'color:#ff6b9d');
+    var respTxt = sel ? ('<b>' + sel.toUpperCase() + ')</b> ' + (cfg.textos[sel]||sel)) : '<em style="color:#7878a0">Sin respuesta</em>';
+    var respHTML = '<span style="' + color + '">' + icon + '</span>' + respTxt;
+    var corrHTML = (!esCorr && sel) ? ('<b>Correcta:</b> ' + cfg.correcta.toUpperCase() + ') ' + cfg.textos[cfg.correcta]) : '';
+    return qBlock(num, tipo, enunciado, respHTML, corrHTML, cls);
+  }
+
+  function q2Block() {
+    var sel = data.q2;
+    var q2ok = sel.length === Q2_CORRECTAS.length && Q2_CORRECTAS.every(function(v){return sel.indexOf(v)>=0;});
+    var cls = sel.length === 0 ? 'op' : q2ok ? 'co' : 'wr';
+    var icon = sel.length === 0 ? '' : (q2ok ? '\u2713 ' : '\u2717 ');
+    var color = sel.length === 0 ? '' : (q2ok ? 'color:#6bcb77' : 'color:#ff6b9d');
+    var selTxt = sel.length > 0 ? sel.map(function(v){return Q2_OPTS[v]||v;}).join(', ') : '<em style="color:#7878a0">Sin respuesta</em>';
+    var respHTML = '<span style="' + color + '">' + icon + '</span>' + selTxt;
+    var corrHTML = (!q2ok && sel.length > 0) ? '<b>Correcta:</b> Delicadeza / tecnolog\u00eda refinada' : '';
+    return qBlock('02', 'Constelaci\u00f3n connotativa',
+      'La combinaci\u00f3n extra-light + alta altura de x + sans humanista activa en la constelaci\u00f3n de Moles:',
+      respHTML, corrHTML, cls);
+  }
+
+  function abiertaBlock(num, tipo, enunciado, texto) {
+    var tiene = texto && texto.length > 0;
+    var respHTML = tiene ? texto.replace(/</g,'&lt;').replace(/>/g,'&gt;') : '<em style="color:#7878a0">Sin respuesta</em>';
+    return qBlock(num, tipo + ' <span style="color:#e9c46a;font-size:9px">\u2014 REVISI\u00d3N DOCENTE</span>', enunciado,
+      '<span style="white-space:pre-wrap;line-height:1.7">' + respHTML + '</span>', '', 'op');
+  }
+
+  var css = [
+    "@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap');",
+    "*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}",
+    "html,body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}",
+    "body{font-family:'Outfit',sans-serif;background:#07070f;color:#f0f0f8;margin:0;padding:0}",
+    "@page{margin:10mm;size:A4 portrait}",
+    ".wrap{max-width:760px;margin:0 auto;padding:0 0 32px}",
+    ".hdr{background:linear-gradient(135deg,#0e0e1a,#140c20);border-bottom:3px solid #c9184a;padding:28px 32px 22px}",
+    ".logo{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:#c9184a;margin-bottom:8px}",
+    ".hdr h2{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900}",
+    ".sub{font-size:12px;color:#a0a0c0;margin-top:3px}",
+    ".meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;margin-top:12px;font-size:12px;color:#a0a0c0}",
+    ".meta b{color:#f0f0f8;font-size:13px}",
+    ".scores{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:rgba(201,24,74,.1);border:1px solid rgba(201,24,74,.3);border-radius:8px;padding:12px 20px;margin-top:14px}",
+    ".si{text-align:center}",
+    ".sn{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1}",
+    ".sl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#7878a0;margin-top:2px}",
+    ".se{font-size:11px;font-weight:700;margin-top:2px}",
+    ".sdiv{width:1px;background:rgba(255,255,255,.1);align-self:stretch}",
+    ".sec{padding:18px 32px}",
+    ".secl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:#7878a0;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.06)}",
+    ".qb{background:#0e0e1a;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:14px 18px;margin-bottom:12px;page-break-inside:avoid}",
+    ".qb.co{border-left:4px solid #6bcb77}",
+    ".qb.wr{border-left:4px solid #c9184a}",
+    ".qb.op{border-left:4px solid #e9c46a}",
+    ".qn{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#7878a0;margin-bottom:4px}",
+    ".qt{font-size:13px;font-weight:600;margin-bottom:9px;line-height:1.45;color:#d0d0e8}",
+    ".qr{background:#141426;border-radius:5px;padding:9px 13px}",
+    ".rl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#7878a0;margin-bottom:4px}",
+    ".rv{font-size:13px;color:#f0f0f8;line-height:1.6}",
+    ".qc{font-size:11.5px;color:#6bcb77;margin-top:6px;padding:5px 10px;background:rgba(107,203,119,.08);border-radius:4px}",
+    ".foot{padding:12px 32px;border-top:1px solid rgba(255,255,255,.06);margin-top:12px;display:flex;justify-content:space-between;font-size:10px;color:#7878a0;font-family:'Space Mono',monospace;flex-wrap:wrap;gap:4px}",
+    ".pbtn{text-align:center;padding:20px}",
+    ".pbtn button{background:#c9184a;color:#fff;border:none;padding:12px 36px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer}",
+    "@media print{.pbtn{display:none!important}}"
+  ].join('');
+
+  var body = '<div class="wrap">' +
+    '<div class="hdr">' +
+      '<div class="logo">UTP \u00b7 Tipograf\u00eda \u00b7 Semana 3 \u00b7 2026</div>' +
+      '<h2>Informe de Evaluaci\u00f3n Tipogr\u00e1fica</h2>' +
+      '<div class="sub">Constelaci\u00f3n de Atributos de Moles \u00b7 Mg. Mario Quiroz</div>' +
+      '<div class="meta">' +
+        '<div>Estudiante: <b>' + (data.nombre||'\u2014') + '</b></div>' +
+        '<div>Correo: <b>' + (data.email||'\u2014') + '</b></div>' +
+        '<div>Tipograf\u00eda: <b>' + data.tipo + '</b></div>' +
+        '<div>Fecha: <b>' + fecha + ', ' + hora + '</b></div>' +
+      '</div>' +
+      '<div class="scores">' +
+        '<div class="si"><div class="sn" style="color:' + estadoColor + '">' + score.pts + '<span style="font-size:1rem;color:#7878a0"> / ' + score.total + '</span></div><div class="sl">Objetivas</div><div class="se" style="color:' + estadoColor + '">' + estadoLabel + '</div></div>' +
+        '<div class="sdiv"></div>' +
+        '<div class="si"><div class="sn" style="color:' + notaColor + '">' + score.nota + '<span style="font-size:1rem;color:#7878a0"> / 20</span></div><div class="sl">Nota estimada</div><div class="se" style="color:' + notaColor + '">' + notaLabel + '</div></div>' +
+        '<div class="sdiv"></div>' +
+        '<div class="si"><div class="sn" style="color:#e9c46a">' + score.abiertas + '<span style="font-size:1rem;color:#7878a0"> / 3</span></div><div class="sl">Abiertas</div><div class="se" style="color:#e9c46a">Pend. revisi\u00f3n</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="sec">' +
+      '<div class="secl">Preguntas objetivas \u2014 calificaci\u00f3n autom\u00e1tica</div>' +
+      objBlock('q1','01','Identificaci\u00f3n formal','\u00bfQu\u00e9 combinaci\u00f3n de atributos describe mejor la tipograf\u00eda de "EPIC"?') +
+      q2Block() +
+      objBlock('q3','03','Atributo formal y connotaci\u00f3n','En "START", \u00bfqu\u00e9 conjunto de atributos genera la connotaci\u00f3n de urgencia y acci\u00f3n inmediata?') +
+      objBlock('q4','04','Ret\u00edcula y constelaci\u00f3n','\u00bfC\u00f3mo altera la jerarqu\u00eda cambiar el nodo dominante de "black display" a "light cuerpo"?') +
+    '</div>' +
+    '<div class="sec" style="padding-top:0">' +
+      '<div class="secl">Preguntas abiertas \u2014 requieren revisi\u00f3n docente</div>' +
+      abiertaBlock('05','An\u00e1lisis abierto','Elige UNA tipograf\u00eda. Explica una decisi\u00f3n tipogr\u00e1fica identificando el atributo formal y el valor psicol\u00f3gico seg\u00fan la constelaci\u00f3n de Moles.', data.q5) +
+      abiertaBlock('06','Ret\u00edcula y tono de voz','Describe c\u00f3mo la constelaci\u00f3n de Moles en la p\u00e1gina refuerza o contradice el tono de voz tipogr\u00e1fico en uno de los ejemplos.', data.q6) +
+      abiertaBlock('07','Propuesta creativa','Prop\u00f3n una modificaci\u00f3n de atributo en uno de los ejemplos y justifica su impacto sem\u00e1ntico seg\u00fan Moles.', data.q7) +
+    '</div>' +
+    '<div class="foot">' +
+      '<span>Constelaci\u00f3n Tipogr\u00e1fica \u00b7 Atributos de Moles</span>' +
+      '<span>Docente: Mg. Mario Quiroz \u00b7 UTP 2026</span>' +
+      '<span>Generado: ' + fecha + '</span>' +
+    '</div>' +
+  '</div>' +
+  '<div class="pbtn"><button onclick="window.print()">\uD83D\uDDA8 Imprimir / Guardar PDF</button></div>';
+
+  return '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1.0">' +
+    '<title>Informe \u2013 ' + (data.nombre||'Estudiante') + '</title>' +
+    '<style>' + css + '</style></head><body>' + body +
+    '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},900);});<\/script>' +
+    '</body></html>';
+}
+
+function generarInforme() {
+  var data  = getFormData();
+  var score = calcPuntaje(data);
+  var ahora = new Date();
+  var fecha = ahora.toLocaleDateString('es-PE', {day:'2-digit',month:'long',year:'numeric'});
+  var hora  = ahora.toLocaleTimeString('es-PE', {hour:'2-digit',minute:'2-digit'});
+  return buildInforme(data, score, fecha, hora);
+}
+
+/* Abrir informe en ventana nueva */
+document.getElementById('btn-print').addEventListener('click', function() {
+  if (!checkFormComplete()) {
+    var ok = true;
+    ok = chkText('f-nombre','grp-nombre') && ok;
+    ok = chkEmail('f-email','grp-email') && ok;
+    ok = chkRadio('q1','grp-q1') && ok;
+    ok = chkRadio('q3','grp-q3') && ok;
+    ok = chkRadio('q4','grp-q4') && ok;
+    ok = chkTextMin('f-q5','grp-q5') && ok;
+    ok = chkTextMin('f-q6','grp-q6') && ok;
+    ok = chkTextMin('f-q7','grp-q7') && ok;
+    var first = document.querySelector('.f-group.bad,.q-block.bad');
+    if (first) first.scrollIntoView({behavior:'smooth',block:'center'});
+    var btn = document.getElementById('btn-print');
+    var orig = btn.innerHTML;
+    btn.style.background = 'var(--orange)';
+    btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Completa el formulario';
+    setTimeout(function(){ btn.style.background=''; btn.innerHTML=orig; }, 2600);
+    return;
+  }
+  var htmlContent = generarInforme();
+  var win = window.open('', '_blank', 'width=900,height=700,scrollbars=yes,resizable=yes');
+  if (win) {
+    win.document.open();
+    win.document.write(htmlContent);
+    win.document.close();
+  } else {
+    var blob = new Blob([htmlContent], {type:'text/html;charset=utf-8'});
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href=url; a.target='_blank'; a.rel='noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);}, 5000);
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════
+   EXPORTAR CSV
+══════════════════════════════════════════════════════════════ */
+function escCSV(val) {
+  if (val === null || val === undefined) return '""';
+  return '"' + String(val).replace(/"/g, '""') + '"';
+}
+
+document.getElementById('btn-csv').addEventListener('click', function() {
+  var data  = getFormData();
+  var score = calcPuntaje(data);
+  var ahora = new Date();
+  var fecha = ahora.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+
+  var q2ok = data.q2.length === Q2_CORRECTAS.length && Q2_CORRECTAS.every(function(v){return data.q2.indexOf(v)>=0;});
+
+  var headers = [
+    'Fecha','Nombre','Correo','Tipografia',
+    'P01_Respuesta','P01_Correcta',
+    'P02_Respuesta','P02_Correcta',
+    'P03_Respuesta','P03_Correcta',
+    'P04_Respuesta','P04_Correcta',
+    'P05_Analisis','P06_Reticula','P07_Propuesta',
+    'Pts_Objetivas','Total_Objetivas','Nota_20','Resultado','Abiertas_Respondidas'
+  ];
+
+  var row = [
+    fecha, data.nombre, data.email, data.tipo,
+    data.q1||'', data.q1 === CORRECTAS.q1.correcta ? 'SI' : 'NO',
+    data.q2.join(';')||'', q2ok ? 'SI' : 'NO',
+    data.q3||'', data.q3 === CORRECTAS.q3.correcta ? 'SI' : 'NO',
+    data.q4||'', data.q4 === CORRECTAS.q4.correcta ? 'SI' : 'NO',
+    data.q5, data.q6, data.q7,
+    score.pts, score.total, score.nota,
+    score.nota >= 14 ? 'Aprobado' : 'Desaprobado',
+    score.abiertas
+  ];
+
+  var csv = '\uFEFF' + headers.map(escCSV).join(',') + '\r\n' + row.map(escCSV).join(',') + '\r\n';
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  var nombre = 'evaluacion_tipografica_' +
+    (data.nombre ? data.nombre.replace(/\s+/g,'_').toLowerCase() : 'estudiante') +
+    '_' + ahora.toISOString().slice(0,10) + '.csv';
+  a.href=url; a.download=nombre;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+</script>
 
 </body>
 </html>
